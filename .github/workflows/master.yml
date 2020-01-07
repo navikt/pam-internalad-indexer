@@ -16,7 +16,7 @@ jobs:
       - name: build docker image
         env:
           DOCKER_IMAGE: docker.pkg.github.com/${{ github.repository }}/pam-internalad-indexer
-          IMAGE_TAG: $GITHUB_SHA | cut -c1-7
+          IMAGE_TAG: $(echo GITHUB_SHA | cut -c1-7)
         run: |
           docker build . --pull -t $DOCKER_IMAGE:$IMAGE_TAG
 #      - name: push docker image
