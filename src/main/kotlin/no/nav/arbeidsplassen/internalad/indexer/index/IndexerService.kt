@@ -33,9 +33,8 @@ class IndexerService(val feedTaskService: FeedTaskService,
                      val feedConnector: FeedConnector,
                      val client: RestHighLevelClient,
                      val objectMapper: ObjectMapper,
-                     @Value("index.months.from") val months: Long = 12) {
-
-    private val adUrl = "http://localhost:9001/api/v1/ads"
+                     @Value("\${indexer.from}") val months: Long = 12,
+                     @Value("\${feed.ad.url}") val adUrl: String) {
 
     companion object {
         private const val FETCH_INTERNAL_ADS = "fetchInternalAds"

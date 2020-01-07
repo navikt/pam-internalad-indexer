@@ -31,3 +31,4 @@ shedlock:
 indexer:
   scheduler:
     enabled: false
+  from: 12 #now-12month
