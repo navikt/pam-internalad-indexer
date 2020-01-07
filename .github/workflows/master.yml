@@ -23,4 +23,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "$GITHUB_TOKEN" | docker login --username "$GITHUB_REPOSITORY" --password-stdin docker.pkg.github.com
-
+          docker push $(cat .docker_image):$(cat .docker_tag)
+      - name: deploy to dev-sbs
+        uses: navikt/deployment-cli/action@0.4.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWAIT_SECONDS: 0
+        with:
+          cluster: dev-sbs
+          team: teampam
+          resources: naiserator.yml
+          vars: naiserator-dev.json
