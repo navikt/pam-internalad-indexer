@@ -1,7 +1,7 @@
 package no.nav.arbeidsplassen.internalad.indexer.feed
 
 import java.time.LocalDateTime
-import java.util.*
+
 
 data class AdTransport(val id: Long, val uuid: String, val createdBy: String, val updatedBy: String, val created: LocalDateTime,
                        val updated: LocalDateTime, val contactList: List<Contact> = listOf(), val mediaList: List<Media> = listOf(),

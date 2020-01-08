@@ -16,15 +16,15 @@ class IndexerFactory(val highLevelClient: RestHighLevelClient) {
     }
 }
 
-const val INTERNAL_AD = "internal-ad"
+const val INTERNALAD = "internalad"
 val datePattern: DateTimeFormatter = DateTimeFormatter.ofPattern("_yyyyMMdd_HHmmss")
 
 fun internalAdIndexWithTimestamp(): String {
-    return INTERNAL_AD +LocalDateTime.now().format(datePattern)
+    return INTERNALAD +LocalDateTime.now().format(datePattern)
 }
 
 
-const val INTERNAL_AD_MAPPING = """{
+const val INTERNALAD_MAPPING = """{
   "date_detection": false,
 
   "properties": {
@@ -454,7 +454,7 @@ const val INTERNAL_AD_MAPPING = """{
 }
 """
 
-const val INTERNAL_AD_COMMON_SETTINGS="""{
+const val INTERNALAD_COMMON_SETTINGS="""{
   "settings": {
     "index": {
       "number_of_shards": 3,
