@@ -372,6 +372,12 @@ const val INTERNALAD_MAPPING = """{
         },
         "employees": {
           "type": "long"
+        },
+        "properties.nace2.code":{
+          "type": "keyword"
+        },
+        "properties.nace2.name":{
+          "type": "text"
         }
       }
     },
@@ -440,7 +446,15 @@ const val INTERNALAD_MAPPING = """{
           "ignore_malformed": true
         },
         "searchtags": {
-          "type": "text"
+          "properties": {
+            "label": {
+              "type": "text",
+              "copy_to": ["searchtags_no", "searchtags_suggest", "searchtags_facet"]
+            },
+            "score": {
+              "type": "float"
+            }
+          }
         },
         "classification_styrk08_score": {
           "type": "float"

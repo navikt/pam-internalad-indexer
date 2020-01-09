@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import java.util.function.Consumer
 
 class JsonStringExploder(val objectMapper: ObjectMapper,
-                                      val jsonPointer: JsonPointer,
-                                      val failOnParseError: Boolean) : Consumer<PipelineItem> {
+                         val jsonPointer: JsonPointer,
+                         val failOnParseError: Boolean) : Consumer<PipelineItem> {
 
     override fun accept(item: PipelineItem) {
         val node = item.document.at(jsonPointer)

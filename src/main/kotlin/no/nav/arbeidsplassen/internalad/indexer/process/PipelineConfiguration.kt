@@ -13,8 +13,8 @@ import javax.inject.Singleton
 class PipelineConfiguration(val objectMapper: ObjectMapper) {
 
     @Singleton
-    fun adPipeline(): PipelineFactory { // Filter chain determines which ads are indexed or deleted from ElasticSearch
-        val filterChain: Predicate<AdTransport> = notDeletedAdsFilter()
+    fun adPipeline(): PipelineFactory {
+        val filterChain: Predicate<AdTransport> = allowAllFilter()
         val processorChain: Consumer<PipelineItem> = AddGeoPointToLocation()
                 .andThen(JsonStringExploder(objectMapper, JsonPointer.valueOf("/properties/searchtags"), true))
                 .andThen(JsonStringExploder(objectMapper, JsonPointer.valueOf( "/properties/softrequirements"), true))
@@ -30,12 +30,11 @@ class PipelineConfiguration(val objectMapper: ObjectMapper) {
             return Predicate<AdTransport> { dto: AdTransport -> "DELETED" != dto.status }
         }
 
-        private fun removeFinnContactInfo(): Consumer<in PipelineItem> {
-            return Consumer<PipelineItem> { item: PipelineItem ->
-                if ("FINN" == item.dto.source) {
-                    item.document.remove("contactList")
-                }
+        private fun allowAllFilter(): Predicate<AdTransport> {
+            return Predicate<AdTransport> {
+                true
             }
         }
+
     }
 }

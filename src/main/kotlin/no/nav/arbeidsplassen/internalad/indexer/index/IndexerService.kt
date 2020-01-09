@@ -5,6 +5,8 @@ import io.micronaut.context.annotation.Value
 import no.nav.arbeidsplassen.internalad.indexer.feed.AdTransport
 import no.nav.arbeidsplassen.internalad.indexer.feed.FeedConnector
 import no.nav.arbeidsplassen.internalad.indexer.feed.FeedTaskService
+import no.nav.arbeidsplassen.internalad.indexer.process.PipelineFactory
+import no.nav.arbeidsplassen.internalad.indexer.process.PipelineItem
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest
 import org.elasticsearch.action.bulk.BulkRequest
 import org.elasticsearch.action.bulk.BulkResponse
@@ -25,6 +27,7 @@ import org.elasticsearch.search.sort.SortBuilders
 import org.elasticsearch.search.sort.SortOrder
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
+import java.util.stream.Stream
 import javax.inject.Singleton
 
 
@@ -34,7 +37,8 @@ class IndexerService(val feedTaskService: FeedTaskService,
                      val client: RestHighLevelClient,
                      val objectMapper: ObjectMapper,
                      @Value("\${indexer.ads.from}") val months: Long = 12,
-                     @Value("\${feed.ad.url}") val adUrl: String) {
+                     @Value("\${feed.ad.url}") val adUrl: String,
+                     val adPipelineFactory: PipelineFactory) {
 
     companion object {
         private const val FETCH_INTERNAL_ADS = "fetchInternalAds"
@@ -85,7 +89,8 @@ class IndexerService(val feedTaskService: FeedTaskService,
         val lastRunDate = feedTaskService.fetchLastRunDateForJob(FETCH_INTERNAL_ADS) ?: getDefaultStartTime()
         val ads = feedConnector.fetchContentList( adUrl, lastRunDate, AdTransport::class.java)
         if (ads.isNotEmpty()) {
-            val bulkResponse = indexBulk(ads, INTERNALAD)
+            val adStream = adPipelineFactory.toPipelineStream(ads)
+            val bulkResponse = indexBulk(adStream, INTERNALAD)
             if (bulkResponse.status() == RestStatus.OK && !bulkResponse.hasFailures()) {
                 LOG.info("indexed ${bulkResponse.items.size} items")
                 val adTransport = ads[ads.size - 1]
@@ -103,7 +108,8 @@ class IndexerService(val feedTaskService: FeedTaskService,
         var ads = feedConnector.fetchContentList( adUrl, from, AdTransport::class.java)
         var lastUpdated = from
         while(ads.isNotEmpty())   {
-            val bulkResponse = indexBulk(ads, indexName)
+            val adStream = adPipelineFactory.toPipelineStream(ads)
+            val bulkResponse = indexBulk(adStream, indexName)
             if (bulkResponse.status() == RestStatus.OK && !bulkResponse.hasFailures() && ads[ads.size - 1].updated.isAfter(lastUpdated)) {
                 lastUpdated = ads[ads.size - 1].updated
                 LOG.info("Last updated time set to $lastUpdated")
@@ -119,13 +125,12 @@ class IndexerService(val feedTaskService: FeedTaskService,
         return lastUpdated
     }
 
-    private fun indexBulk(ads: List<AdTransport>, indexName: String): BulkResponse {
-        LOG.debug("indexing ${ads.size} items")
+    private fun indexBulk(ads: Stream<PipelineItem>, indexName: String): BulkResponse {
         val bulkRequest = BulkRequest()
         ads.forEach {
             bulkRequest.add(IndexRequest(indexName)
-                    .id(it.uuid)
-                    .source(objectMapper.writeValueAsString(it), XContentType.JSON))
+                    .id(it.dto.uuid)
+                    .source(objectMapper.writeValueAsString(it.document), XContentType.JSON))
         }
         return client.bulk(bulkRequest, RequestOptions.DEFAULT)
     }

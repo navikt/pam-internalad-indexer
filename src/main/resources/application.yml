@@ -26,7 +26,7 @@ jackson:
 feed:
   ad:
     url: http://localhost:9001/api/v1/ads
-  pagesize: 100
+  pagesize: 1000
 shedlock:
   defaults:
     lock-at-most-for: 3m
