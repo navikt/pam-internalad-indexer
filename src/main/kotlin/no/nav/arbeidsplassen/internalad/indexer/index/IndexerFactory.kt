@@ -16,15 +16,15 @@ class IndexerFactory(val highLevelClient: RestHighLevelClient) {
     }
 }
 
-const val INTERNAL_AD = "internal-ad"
+const val INTERNALAD = "internalad"
 val datePattern: DateTimeFormatter = DateTimeFormatter.ofPattern("_yyyyMMdd_HHmmss")
 
 fun internalAdIndexWithTimestamp(): String {
-    return INTERNAL_AD +LocalDateTime.now().format(datePattern)
+    return INTERNALAD +LocalDateTime.now().format(datePattern)
 }
 
 
-const val INTERNAL_AD_MAPPING = """{
+const val INTERNALAD_MAPPING = """{
   "date_detection": false,
 
   "properties": {
@@ -372,6 +372,12 @@ const val INTERNAL_AD_MAPPING = """{
         },
         "employees": {
           "type": "long"
+        },
+        "properties.nace2.code":{
+          "type": "keyword"
+        },
+        "properties.nace2.name":{
+          "type": "text"
         }
       }
     },
@@ -440,7 +446,15 @@ const val INTERNAL_AD_MAPPING = """{
           "ignore_malformed": true
         },
         "searchtags": {
-          "type": "text"
+          "properties": {
+            "label": {
+              "type": "text",
+              "copy_to": ["searchtags_no", "searchtags_suggest", "searchtags_facet"]
+            },
+            "score": {
+              "type": "float"
+            }
+          }
         },
         "classification_styrk08_score": {
           "type": "float"
@@ -454,7 +468,7 @@ const val INTERNAL_AD_MAPPING = """{
 }
 """
 
-const val INTERNAL_AD_COMMON_SETTINGS="""{
+const val INTERNALAD_COMMON_SETTINGS="""{
   "settings": {
     "index": {
       "number_of_shards": 3,

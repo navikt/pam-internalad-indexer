@@ -5,6 +5,8 @@ import io.micronaut.context.annotation.Value
 import no.nav.arbeidsplassen.internalad.indexer.feed.AdTransport
 import no.nav.arbeidsplassen.internalad.indexer.feed.FeedConnector
 import no.nav.arbeidsplassen.internalad.indexer.feed.FeedTaskService
+import no.nav.arbeidsplassen.internalad.indexer.process.PipelineFactory
+import no.nav.arbeidsplassen.internalad.indexer.process.PipelineItem
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest
 import org.elasticsearch.action.bulk.BulkRequest
 import org.elasticsearch.action.bulk.BulkResponse
@@ -25,6 +27,7 @@ import org.elasticsearch.search.sort.SortBuilders
 import org.elasticsearch.search.sort.SortOrder
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
+import java.util.stream.Stream
 import javax.inject.Singleton
 
 
@@ -33,8 +36,9 @@ class IndexerService(val feedTaskService: FeedTaskService,
                      val feedConnector: FeedConnector,
                      val client: RestHighLevelClient,
                      val objectMapper: ObjectMapper,
-                     @Value("\${indexer.from}") val months: Long = 12,
-                     @Value("\${feed.ad.url}") val adUrl: String) {
+                     @Value("\${indexer.ads.from}") val months: Long = 12,
+                     @Value("\${feed.ad.url}") val adUrl: String,
+                     val adPipelineFactory: PipelineFactory) {
 
     companion object {
         private const val FETCH_INTERNAL_ADS = "fetchInternalAds"
@@ -42,7 +46,7 @@ class IndexerService(val feedTaskService: FeedTaskService,
     }
 
     init {
-        val defaultIndexRequest = GetIndexRequest(INTERNAL_AD)
+        val defaultIndexRequest = GetIndexRequest(INTERNALAD)
         if (!client.indices().exists(defaultIndexRequest, RequestOptions.DEFAULT)) {
             val indexName = internalAdIndexWithTimestamp()
             createIndex(indexName)
@@ -56,10 +60,10 @@ class IndexerService(val feedTaskService: FeedTaskService,
         if (!client.indices().exists(indexRequest, RequestOptions.DEFAULT)) {
             LOG.info("Creating index {} ", indexName)
             val request = CreateIndexRequest(indexName)
-                    .source(INTERNAL_AD_COMMON_SETTINGS, XContentType.JSON)
+                    .source(INTERNALAD_COMMON_SETTINGS, XContentType.JSON)
             client.indices().create(request, RequestOptions.DEFAULT)
             val putMappingRequest = PutMappingRequest(indexName)
-                    .source(INTERNAL_AD_MAPPING, XContentType.JSON)
+                    .source(INTERNALAD_MAPPING, XContentType.JSON)
             client.indices().putMapping(putMappingRequest, RequestOptions.DEFAULT)
             return true
         }
@@ -69,14 +73,14 @@ class IndexerService(val feedTaskService: FeedTaskService,
     fun updateAlias(indexName: String): Boolean {
         val remove = IndicesAliasesRequest.AliasActions(IndicesAliasesRequest.AliasActions.Type.REMOVE)
                 .index("*")
-                .alias(INTERNAL_AD)
+                .alias(INTERNALAD)
         val add = IndicesAliasesRequest.AliasActions(IndicesAliasesRequest.AliasActions.Type.ADD)
                 .index(indexName)
-                .alias(INTERNAL_AD)
+                .alias(INTERNALAD)
         val request = IndicesAliasesRequest()
                 .addAliasAction(remove)
                 .addAliasAction(add)
-        LOG.info("updateAlias for alias $INTERNAL_AD and pointing to $indexName ")
+        LOG.info("updateAlias for alias $INTERNALAD and pointing to $indexName ")
         return client.indices().updateAliases(request, RequestOptions.DEFAULT).isAcknowledged
 
     }
@@ -85,7 +89,8 @@ class IndexerService(val feedTaskService: FeedTaskService,
         val lastRunDate = feedTaskService.fetchLastRunDateForJob(FETCH_INTERNAL_ADS) ?: getDefaultStartTime()
         val ads = feedConnector.fetchContentList( adUrl, lastRunDate, AdTransport::class.java)
         if (ads.isNotEmpty()) {
-            val bulkResponse = indexBulk(ads, INTERNAL_AD)
+            val adStream = adPipelineFactory.toPipelineStream(ads)
+            val bulkResponse = indexBulk(adStream, INTERNALAD)
             if (bulkResponse.status() == RestStatus.OK && !bulkResponse.hasFailures()) {
                 LOG.info("indexed ${bulkResponse.items.size} items")
                 val adTransport = ads[ads.size - 1]
@@ -103,7 +108,8 @@ class IndexerService(val feedTaskService: FeedTaskService,
         var ads = feedConnector.fetchContentList( adUrl, from, AdTransport::class.java)
         var lastUpdated = from
         while(ads.isNotEmpty())   {
-            val bulkResponse = indexBulk(ads, indexName)
+            val adStream = adPipelineFactory.toPipelineStream(ads)
+            val bulkResponse = indexBulk(adStream, indexName)
             if (bulkResponse.status() == RestStatus.OK && !bulkResponse.hasFailures() && ads[ads.size - 1].updated.isAfter(lastUpdated)) {
                 lastUpdated = ads[ads.size - 1].updated
                 LOG.info("Last updated time set to $lastUpdated")
@@ -119,13 +125,12 @@ class IndexerService(val feedTaskService: FeedTaskService,
         return lastUpdated
     }
 
-    private fun indexBulk(ads: List<AdTransport>, indexName: String): BulkResponse {
-        LOG.info("indexing ${ads.size} items")
+    private fun indexBulk(ads: Stream<PipelineItem>, indexName: String): BulkResponse {
         val bulkRequest = BulkRequest()
         ads.forEach {
             bulkRequest.add(IndexRequest(indexName)
-                    .id(it.uuid)
-                    .source(objectMapper.writeValueAsString(it), XContentType.JSON))
+                    .id(it.dto.uuid)
+                    .source(objectMapper.writeValueAsString(it.document), XContentType.JSON))
         }
         return client.bulk(bulkRequest, RequestOptions.DEFAULT)
     }
@@ -145,7 +150,7 @@ class IndexerService(val feedTaskService: FeedTaskService,
     }
 
     fun deleteOldAds() {
-        val deleteRequest = DeleteByQueryRequest(INTERNAL_AD)
+        val deleteRequest = DeleteByQueryRequest(INTERNALAD)
         val adsOlderThan = getDefaultStartTime()
         LOG.info("Deleting ads older than $adsOlderThan from index")
         val oldAdsRange = RangeQueryBuilder("updated").lt(adsOlderThan)

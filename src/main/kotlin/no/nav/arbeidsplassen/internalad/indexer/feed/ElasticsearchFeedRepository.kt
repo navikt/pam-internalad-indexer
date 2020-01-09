@@ -20,7 +20,7 @@ class ElasticsearchFeedRepository(val client: RestHighLevelClient,
                                   val objectMapper: ObjectMapper) {
 
     companion object {
-        private val FEEDTASK_INDEX = "feedtask-internal-ad"
+        private val FEEDTASK_INDEX = "feedtask-internalad"
         private val LOG = LoggerFactory.getLogger(ElasticsearchFeedRepository::class.java)
     }
 

@@ -24,11 +24,14 @@ jackson:
   serialization:
     indentOutput: true
 feed:
+  ad:
+    url: http://localhost:9001/api/v1/ads
   pagesize: 1000
 shedlock:
   defaults:
     lock-at-most-for: 3m
 indexer:
   scheduler:
-    enabled: false
-  from: 12 #now-12month
+    enabled: true
+  ads:
+    from: 1 #now-12month
