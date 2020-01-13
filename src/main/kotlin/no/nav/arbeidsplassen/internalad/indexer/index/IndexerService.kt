@@ -150,11 +150,13 @@ class IndexerService(val feedTaskService: FeedTaskService,
     }
 
     fun deleteOldAds() {
-        val deleteRequest = DeleteByQueryRequest(INTERNALAD)
-        val adsOlderThan = getDefaultStartTime()
+        val adsOlderThan = LocalDateTime.now().minusMonths(12)
         LOG.info("Deleting ads older than $adsOlderThan from index")
         val oldAdsRange = RangeQueryBuilder("updated").lt(adsOlderThan)
-        deleteRequest.setQuery(oldAdsRange)
+        val deleteRequest = DeleteByQueryRequest(INTERNALAD).apply {
+            setQuery(oldAdsRange)
+            batchSize = 1000
+        }
         val response = client.deleteByQuery(deleteRequest, RequestOptions.DEFAULT)
         LOG.info("Deleted ${response.deleted} ads")
     }
