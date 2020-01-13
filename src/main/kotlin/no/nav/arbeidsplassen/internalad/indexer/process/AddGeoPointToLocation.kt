@@ -5,7 +5,7 @@ import java.util.function.Consumer
 class AddGeoPointToLocation: Consumer<PipelineItem> {
     override fun accept(item: PipelineItem) {
         val locationList = item.document.path("locationList")
-        if (locationList.isMissingNode || locationList[0].isMissingNode
+        if (locationList.isMissingNode || locationList[0] == null
                 || locationList[0].path("latitude").isMissingNode
                 || locationList[0].path("latitude").isNull
                 || locationList[0].path("longitude").isMissingNode
