@@ -4,16 +4,16 @@ import java.util.function.Consumer
 
 class AddGeoPointToLocation: Consumer<PipelineItem> {
     override fun accept(item: PipelineItem) {
-        val location = item.document.path("location")
-        if (location.isMissingNode
-                || location.path("latitude").isMissingNode
-                || location.path("latitude").isNull
-                || location.path("longitude").isMissingNode
-                || location.path("longitude").isNull) {
+        val locationList = item.document.path("locationList")
+        if (locationList.isMissingNode || locationList[0].isMissingNode
+                || locationList[0].path("latitude").isMissingNode
+                || locationList[0].path("latitude").isNull
+                || locationList[0].path("longitude").isMissingNode
+                || locationList[0].path("longitude").isNull) {
             return
         }
         item.document.with("geopoint")
-                .put("lat", location.path("latitude").asDouble())
-                .put("lon", location.path("longitude").asDouble())
+                .put("lat", locationList[0].path("latitude").asDouble())
+                .put("lon", locationList[0].path("longitude").asDouble())
     }
 }
