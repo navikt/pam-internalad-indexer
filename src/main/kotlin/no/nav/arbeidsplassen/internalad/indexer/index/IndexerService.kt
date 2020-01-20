@@ -146,7 +146,8 @@ class IndexerService(val feedTaskService: FeedTaskService,
         sourceBuilder.query(MatchAllQueryBuilder())
         searchRequest.source(sourceBuilder)
         val searchResponse = client.search(searchRequest, RequestOptions.DEFAULT)
-        return objectMapper.readValue(searchResponse.hits.hits[0].sourceAsString, AdTransport::class.java).updated
+        val sourceMap = searchResponse.hits.hits[0].sourceAsMap
+        return LocalDateTime.parse(sourceMap["updated"] as String)
     }
 
     fun deleteOldAds() {

@@ -29,9 +29,9 @@ feed:
     pagesize: 100
 shedlock:
   defaults:
-    lock-at-most-for: 3m
+    lock-at-most-for: 5m
 indexer:
   scheduler:
-    enabled: true
+    enabled: false
   ads:
-    from: 6 #now-12month
+    from: 12 #now-12month

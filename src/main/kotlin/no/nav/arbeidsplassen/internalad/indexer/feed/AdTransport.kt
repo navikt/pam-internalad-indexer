@@ -9,7 +9,7 @@ data class AdTransport(val id: Long, val uuid: String, val createdBy: String, va
                        val title: String, val status: String, val privacy: String, val source: String,
                        val medium: String, val reference: String, val published: LocalDateTime?, val expires: LocalDateTime,
                        val employer: AdCompany?, val categoryList: List<Category> = listOf(), val businessName: String?,
-                       val administration: Administration)
+                       val administration: Administration, val publishedByAdmin: LocalDateTime?)
 
 data class Category(val id: Long, val code: String, val categoryType: String, val name: String, val description: String?, val parentId: Long?)
 
