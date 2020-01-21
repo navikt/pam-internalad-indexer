@@ -32,6 +32,6 @@ shedlock:
     lock-at-most-for: 5m
 indexer:
   scheduler:
-    enabled: false
+    enabled: true
   ads:
     from: 12 #now-12month

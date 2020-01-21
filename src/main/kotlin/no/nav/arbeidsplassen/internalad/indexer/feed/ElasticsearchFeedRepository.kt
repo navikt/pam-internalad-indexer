@@ -70,7 +70,7 @@ class ElasticsearchFeedRepository(val client: RestHighLevelClient,
         try {
             val searchResponse = client.search(searchRequest, RequestOptions.DEFAULT)
             if (searchResponse.status() == RestStatus.OK) {
-                if (searchResponse.hits.totalHits.value > 0) {
+                if (searchResponse.hits.totalHits!!.value > 0) {
                     return searchResponse.hits.hits.map {
                         objectMapper.readValue(it.sourceAsString, FeedTask::class.java)
                     }
