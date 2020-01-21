@@ -55,6 +55,7 @@ test.classpath += configurations.developmentOnly
 mainClassName = "no.nav.arbeidsplassen.internalad.indexer.Application"
 
 test {
+    exclude "**/*IT.class"
     useJUnitPlatform()
 }
 
