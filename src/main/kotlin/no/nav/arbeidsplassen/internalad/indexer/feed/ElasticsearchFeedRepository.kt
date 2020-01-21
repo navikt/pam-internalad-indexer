@@ -3,6 +3,7 @@ package no.nav.arbeidsplassen.internalad.indexer.feed
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.index.IndexRequest
+import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
@@ -10,9 +11,11 @@ import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.client.indices.GetIndexRequest
 import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.common.xcontent.XContentType
+import org.elasticsearch.index.query.MatchAllQueryBuilder
 import org.elasticsearch.rest.RestStatus
+import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.slf4j.LoggerFactory
-import java.lang.Exception
+import java.util.*
 import javax.inject.Singleton
 
 @Singleton
@@ -61,5 +64,23 @@ class ElasticsearchFeedRepository(val client: RestHighLevelClient,
         return null
     }
 
+    fun findAllFeedTask(): List<FeedTask> {
+        val searchRequest = SearchRequest(FEEDTASK_INDEX)
+        searchRequest.source(SearchSourceBuilder().query(MatchAllQueryBuilder()))
+        try {
+            val searchResponse = client.search(searchRequest, RequestOptions.DEFAULT)
+            if (searchResponse.status() == RestStatus.OK) {
+                if (searchResponse.hits.totalHits.value > 0) {
+                    return searchResponse.hits.hits.map {
+                        objectMapper.readValue(it.sourceAsString, FeedTask::class.java)
+                    }
+                }
+            }
+        }
+        catch (e: Exception) {
+            LOG.error("Got exception while findAllFeedTask", e)
+        }
+        return emptyList()
+    }
 
 }

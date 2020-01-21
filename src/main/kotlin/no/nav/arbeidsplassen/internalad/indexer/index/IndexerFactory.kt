@@ -53,6 +53,10 @@ const val INTERNALAD_MAPPING = """{
       "type": "date",
       "format": "strict_date_optional_time"
     },
+    "publishedByAdmin": {
+      "type": "date",
+      "format": "strict_date_optional_time"
+    },
     "expires": {
       "type": "date",
       "format": "strict_date_optional_time"
