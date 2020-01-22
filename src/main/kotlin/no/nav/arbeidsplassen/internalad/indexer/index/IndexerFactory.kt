@@ -1,5 +1,6 @@
 package no.nav.arbeidsplassen.internalad.indexer.index
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.micronaut.context.annotation.Factory
 import net.javacrumbs.shedlock.core.LockProvider
 import org.elasticsearch.client.RestHighLevelClient
@@ -8,11 +9,11 @@ import java.time.format.DateTimeFormatter
 import javax.inject.Singleton
 
 @Factory
-class IndexerFactory(val highLevelClient: RestHighLevelClient) {
+class IndexerFactory(val highLevelClient: RestHighLevelClient, val objectMapper: ObjectMapper) {
 
     @Singleton
     fun lockProvider(): LockProvider {
-        return ElasticsearchLockProvider(highLevelClient);
+        return ElasticsearchLockProvider(highLevelClient=highLevelClient, objectMapper = objectMapper);
     }
 }
 

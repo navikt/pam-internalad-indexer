@@ -1,13 +1,18 @@
 package no.nav.arbeidsplassen.internalad.indexer.index
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import net.javacrumbs.shedlock.core.AbstractSimpleLock
 import net.javacrumbs.shedlock.core.LockConfiguration
 import net.javacrumbs.shedlock.core.LockProvider
 import net.javacrumbs.shedlock.core.SimpleLock
 import net.javacrumbs.shedlock.support.LockException
 import net.javacrumbs.shedlock.support.Utils.getHostname
+import no.nav.arbeidsplassen.internalad.indexer.feed.ElasticsearchFeedRepository
+import no.nav.arbeidsplassen.internalad.indexer.feed.FeedTask
 import org.elasticsearch.ElasticsearchException
 import org.elasticsearch.action.DocWriteResponse
+import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.action.update.UpdateRequest
 import org.elasticsearch.client.RequestOptions
@@ -15,9 +20,11 @@ import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.client.indices.GetIndexRequest
 import org.elasticsearch.common.settings.Settings
+import org.elasticsearch.index.query.MatchAllQueryBuilder
 import org.elasticsearch.rest.RestStatus
 import org.elasticsearch.script.Script
 import org.elasticsearch.script.ScriptType
+import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.time.Instant
@@ -25,7 +32,9 @@ import java.util.*
 import kotlin.collections.HashMap
 
 // Copied, converted to kotlin and made 7.x compatible
-class ElasticsearchLockProvider(val highLevelClient: RestHighLevelClient, val hostname: String = getHostname()) : LockProvider {
+class ElasticsearchLockProvider(val highLevelClient: RestHighLevelClient,
+                                val hostname: String = getHostname(),
+                                val objectMapper: ObjectMapper) : LockProvider {
 
     companion object {
         const val SHEDLOCK_DEFAULT_INDEX = "shedlock"
@@ -122,5 +131,25 @@ class ElasticsearchLockProvider(val highLevelClient: RestHighLevelClient, val ho
                 throw LockException("Unexpected exception occurred", e)
             }
         }
+    }
+
+    fun getAllLocks(): List<JsonNode> {
+        val searchRequest = SearchRequest(SHEDLOCK_DEFAULT_INDEX)
+        searchRequest.source(SearchSourceBuilder().query(MatchAllQueryBuilder()))
+        try {
+            val searchResponse = highLevelClient.search(searchRequest, RequestOptions.DEFAULT)
+            if (searchResponse.status() == RestStatus.OK) {
+                if (searchResponse.hits.totalHits!!.value > 0) {
+                    return searchResponse.hits.hits.map {
+                        objectMapper.readTree(it.sourceAsString)
+                    }
+                }
+            }
+        }
+        catch (e: Exception) {
+            LOG.error("Got exception while findAllFeedTask", e)
+        }
+        return emptyList()
+
     }
 }
