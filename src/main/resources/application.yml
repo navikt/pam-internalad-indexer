@@ -34,4 +34,4 @@ indexer:
   scheduler:
     enabled: true
   ads:
-    from: 12 #now-12month
+    from: 24 #now-24month

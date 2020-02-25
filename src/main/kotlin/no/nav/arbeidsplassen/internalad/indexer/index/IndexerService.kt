@@ -36,7 +36,7 @@ class IndexerService(val feedTaskService: FeedTaskService,
                      val feedConnector: FeedConnector,
                      val client: RestHighLevelClient,
                      val objectMapper: ObjectMapper,
-                     @Value("\${indexer.ads.from}") val months: Long = 12,
+                     @Value("\${indexer.ads.from}") val months: Long = 24,
                      @Value("\${feed.ad.url}") val adUrl: String,
                      val adPipelineFactory: PipelineFactory) {
 
@@ -151,7 +151,7 @@ class IndexerService(val feedTaskService: FeedTaskService,
     }
 
     fun deleteOldAds() {
-        val adsOlderThan = LocalDateTime.now().minusMonths(12)
+        val adsOlderThan = LocalDateTime.now().minusMonths(months)
         LOG.info("Deleting ads older than $adsOlderThan from index")
         val oldAdsRange = RangeQueryBuilder("updated").lt(adsOlderThan)
         val deleteRequest = DeleteByQueryRequest(INTERNALAD).apply {
