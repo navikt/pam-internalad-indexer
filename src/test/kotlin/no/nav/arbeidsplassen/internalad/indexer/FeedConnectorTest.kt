@@ -1,29 +1,60 @@
 package no.nav.arbeidsplassen.internalad.indexer
 
+import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.client.WireMock.*
+import io.micronaut.context.annotation.Replaces
 import io.micronaut.http.client.DefaultHttpClient
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.test.annotation.MicronautTest
 import io.micronaut.test.annotation.MockBean
 import io.reactivex.Flowable
-import no.nav.arbeidsplassen.internalad.indexer.feed.AdTransport
-import no.nav.arbeidsplassen.internalad.indexer.feed.FeedConnector
+import no.nav.arbeidsplassen.internalad.indexer.feed.*
+import no.nav.arbeidsplassen.internalad.indexer.index.AdTopicListener
+import no.nav.arbeidsplassen.internalad.indexer.index.IndexerService
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import java.time.LocalDateTime
 import javax.inject.Inject
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @MicronautTest
 class FeedConnectorTest {
-
 
     @Inject
     lateinit var feedConnector: FeedConnector
 
     @Inject
     lateinit var client: RxHttpClient
+
+    companion object {
+        private val wireMockServer: WireMockServer = WireMockServer(9001)
+    }
+
+    init {
+        wireMockServer.stubFor(head(urlMatching("/feedtask-internalad.*"))
+                .willReturn(aResponse()
+                        .withStatus(200)))
+        wireMockServer.stubFor(put(urlMatching("/internalad.*"))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{\"index\": \"foo\", \"acknowledged\": \"true\", \"shards_acknowledged\": \"true\"}")
+                        .withStatus(200)))
+        wireMockServer.stubFor(post(urlMatching("/_aliases.*"))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{\"index\": \"foo\", \"acknowledged\": \"true\", \"shards_acknowledged\": \"true\"}")
+                        .withStatus(200)))
+        wireMockServer.start()
+    }
+
+    @AfterAll
+    fun tearDownWiremock() {
+        wireMockServer.shutdownServer()
+    }
+
 
     @Test
     fun feedConnectorTest() {
@@ -36,7 +67,6 @@ class FeedConnectorTest {
     fun mockClient(): RxHttpClient {
         return mock(RxHttpClient::class.java)
     }
-
 }
 
 val feedTransportJSON = """

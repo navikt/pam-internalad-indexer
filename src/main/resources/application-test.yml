@@ -1,0 +1,22 @@
+elasticsearch:
+  url: http://localhost:9001
+  user: ''
+  password: ''
+kafka:
+  embedded:
+    enabled: true
+  bootstrap:
+    servers: localhost:9092
+  ssl:
+    truststore:
+      location: ''
+      password: ''
+  sasl:
+    mechanism: PLAIN
+    jaas:
+      config: ''
+  security:
+    protocol: PLAINTEXT
+  schema:
+    registry:
+      url: http://mock:8081/
