@@ -24,7 +24,6 @@ fun internalAdIndexWithTimestamp(): String {
     return INTERNALAD +LocalDateTime.now().format(datePattern)
 }
 
-
 const val INTERNALAD_MAPPING = """{
   "date_detection": false,
 
@@ -124,11 +123,12 @@ const val INTERNALAD_MAPPING = """{
     "municipal_facet": {
       "type": "keyword"
     },
-
+    "city_facet": {
+      "type": "keyword"
+    },
     "geopoint": {
       "type": "geo_point"
     },
-
     "category_no": {
       "type": "text",
       "analyzer": "norwegian"
@@ -212,7 +212,7 @@ const val INTERNALAD_MAPPING = """{
               "type": "keyword"
             }
           },
-          "copy_to": ["geography_all_no"]
+          "copy_to": ["county_facet", "geography_all_no"]
         },
         "municipal": {
           "type": "text",
@@ -221,7 +221,7 @@ const val INTERNALAD_MAPPING = """{
               "type": "keyword"
             }
           },
-          "copy_to": ["geography_all_no"]
+          "copy_to": ["municipal_facet", "geography_all_no"]
         },
         "postalCode": {
           "type": "keyword"
@@ -245,7 +245,8 @@ const val INTERNALAD_MAPPING = """{
           "type": "text"
         },
         "city": {
-          "type": "text"
+          "type": "text",
+          "copy_to": ["city_facet", "geography_all_no"]
         },
         "country": {
           "type": "text",
