@@ -194,70 +194,34 @@ const val INTERNALAD_MAPPING = """{
             "keyword": {
               "type": "keyword"
             }
-          }
-        },
-        "country": {
-          "type": "text",
-          "fields": {
-            "keyword": {
-              "type": "keyword"
-            }
           },
-          "copy_to": ["geography_all_no"]
-        },
-        "county": {
-          "type": "text",
-          "fields": {
-            "keyword": {
-              "type": "keyword"
-            }
-          },
-          "copy_to": ["county_facet", "geography_all_no"]
-        },
-        "municipal": {
-          "type": "text",
-          "fields": {
-            "keyword": {
-              "type": "keyword"
-            }
-          },
-          "copy_to": ["municipal_facet", "geography_all_no"]
-        },
-        "postalCode": {
-          "type": "keyword"
-        },
-        "latitude": {
-          "type": "keyword",
-          "index": false,
-          "doc_values": false
-        },
-        "longitude": {
-          "type": "keyword",
-          "index": false,
-          "doc_values": false
-        }
-      }
-    },
-
-    "location": {
-      "properties": {
-        "address": {
-          "type": "text"
-        },
-        "city": {
-          "type": "text",
           "copy_to": ["city_facet", "geography_all_no"]
         },
         "country": {
           "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword"
+            }
+          },
           "copy_to": ["geography_all_no"]
         },
         "county": {
           "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword"
+            }
+          },
           "copy_to": ["county_facet", "geography_all_no"]
         },
         "municipal": {
           "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword"
+            }
+          },
           "copy_to": ["municipal_facet", "geography_all_no"]
         },
         "postalCode": {
