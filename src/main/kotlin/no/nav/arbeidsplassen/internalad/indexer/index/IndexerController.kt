@@ -27,9 +27,10 @@ class IndexerController(val indexerService: IndexerService,
     }
 
     @Post("/reindex")
-    fun reindex(@QueryValue indexName: String): IndexerResponse {
-        val from = indexerService.getDefaultStartTime()
-        val updatedSince = if (indexerService.createIndex(indexName)) from else indexerService.fetchLastUpdatedTimeForIndex(indexName)
+    fun reindex(@QueryValue indexName: String, @QueryValue from: String): IndexerResponse {
+        val fromDate = if (from.isNullOrEmpty()) indexerService.getDefaultStartTime() else
+                LocalDateTime.parse(from)
+        val updatedSince = if (indexerService.createIndex(indexName)) fromDate else indexerService.fetchLastUpdatedTimeForIndex(indexName)
         return IndexerResponse(indexName, indexerService.fetchFeedIndexAdsUntilNow(updatedSince, indexName))
     }
 
@@ -45,8 +46,9 @@ class IndexerController(val indexerService: IndexerService,
 
     @Put("/feedtasks")
     fun setFeedTaskLastRunDate(@QueryValue name: String,
-                               @QueryValue @Format("yyyy-MM-dd'T'HH:mm:ss.SSS") lastRun: LocalDateTime): FeedTask? {
-        return feedTaskRepository.save(FeedTask(name, lastRun))
+                               @QueryValue lastRun: String): FeedTask? {
+        val lastRunDate = LocalDateTime.parse(lastRun)
+        return feedTaskRepository.save(FeedTask(name, lastRunDate))
     }
 
     @Get("/schedulerlocks")
