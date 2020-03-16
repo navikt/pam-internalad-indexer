@@ -3,10 +3,9 @@ elasticsearch:
   user: ''
   password: ''
 kafka:
-  embedded:
-    enabled: true
   bootstrap:
     servers: localhost:9092
+
   ssl:
     truststore:
       location: ''

@@ -2,26 +2,32 @@ package no.nav.arbeidsplassen.internalad.indexer
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
-import io.micronaut.context.annotation.Replaces
 import io.micronaut.http.client.DefaultHttpClient
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.test.annotation.MicronautTest
 import io.micronaut.test.annotation.MockBean
+import io.micronaut.test.support.TestPropertyProvider
 import io.reactivex.Flowable
-import no.nav.arbeidsplassen.internalad.indexer.feed.*
+import no.nav.arbeidsplassen.internalad.indexer.feed.AdTransport
+import no.nav.arbeidsplassen.internalad.indexer.feed.FeedConnector
 import no.nav.arbeidsplassen.internalad.indexer.index.AdTopicListener
-import no.nav.arbeidsplassen.internalad.indexer.index.IndexerService
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.testcontainers.containers.KafkaContainer
 import java.time.LocalDateTime
 import javax.inject.Inject
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @MicronautTest
-class FeedConnectorTest {
+class FeedConnectorTest : TestPropertyProvider {
 
     @Inject
     lateinit var feedConnector: FeedConnector
@@ -29,8 +35,13 @@ class FeedConnectorTest {
     @Inject
     lateinit var client: RxHttpClient
 
+    @Inject
+    lateinit var kafkaListener: AdTopicListener
+
     companion object {
         private val wireMockServer: WireMockServer = WireMockServer(9001)
+        private val LOG: Logger = LoggerFactory.getLogger(FeedConnectorTest::class.java)
+        private val kafkaContainer: KafkaContainer = KafkaContainer()
     }
 
     init {
@@ -48,11 +59,24 @@ class FeedConnectorTest {
                         .withBody("{\"index\": \"foo\", \"acknowledged\": \"true\", \"shards_acknowledged\": \"true\"}")
                         .withStatus(200)))
         wireMockServer.start()
+
+        kafkaContainer.start()
+        LOG.info("Kafka bootstrap servers: " + kafkaContainer.bootstrapServers)
+
     }
 
+    override fun getProperties(): Map<String, String> {
+        return hashMapOf(Pair("kafka.bootstrap.servers", kafkaContainer.bootstrapServers))
+    }
+
+
+    @BeforeAll
+    fun initKafka() {
+    }
     @AfterAll
     fun tearDownWiremock() {
         wireMockServer.shutdownServer()
+        kafkaContainer.close()
     }
 
 
@@ -61,6 +85,11 @@ class FeedConnectorTest {
         `when`(client.retrieve(ArgumentMatchers.any())).thenReturn(Flowable.just(feedTransportJSON))
         val fetchContentList = feedConnector.fetchContentList("http://localhost:9001/api/v1/ads", LocalDateTime.now(), AdTransport::class.java)
         assertEquals(fetchContentList.size, 2)
+    }
+
+    @Test
+    fun kafkaListenerTest() {
+        //KafkaCl
     }
 
     @MockBean(DefaultHttpClient::class)
