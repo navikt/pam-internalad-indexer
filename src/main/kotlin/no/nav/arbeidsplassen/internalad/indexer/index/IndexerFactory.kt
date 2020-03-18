@@ -3,6 +3,7 @@ package no.nav.arbeidsplassen.internalad.indexer.index
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.micronaut.context.annotation.Factory
 import net.javacrumbs.shedlock.core.LockProvider
+import no.nav.pam.yrkeskategorimapper.StyrkCodeConverter
 import org.elasticsearch.client.RestHighLevelClient
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -14,6 +15,11 @@ class IndexerFactory(val highLevelClient: RestHighLevelClient, val objectMapper:
     @Singleton
     fun lockProvider(): LockProvider {
         return ElasticsearchLockProvider(highLevelClient=highLevelClient, objectMapper = objectMapper);
+    }
+
+    @Singleton
+    fun styrkCodeConverter(): StyrkCodeConverter {
+        return StyrkCodeConverter()
     }
 }
 
