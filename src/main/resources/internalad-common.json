@@ -18,7 +18,7 @@
       "char_filter": {
         "custom_trim": {
           "type": "pattern_replace",
-          "pattern": "^\\s+|\\s+${'$'}",
+          "pattern": "^\\s+|\\s+$",
           "replacement": ""
         }
       },
