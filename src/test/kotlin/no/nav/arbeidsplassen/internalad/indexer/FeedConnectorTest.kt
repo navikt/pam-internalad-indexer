@@ -2,6 +2,9 @@ package no.nav.arbeidsplassen.internalad.indexer
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
+import io.micronaut.configuration.kafka.KafkaProducerFactory
+import io.micronaut.configuration.kafka.annotation.KafkaClient
+import io.micronaut.context.annotation.Property
 import io.micronaut.http.client.DefaultHttpClient
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.test.annotation.MicronautTest
@@ -11,6 +14,10 @@ import io.reactivex.Flowable
 import no.nav.arbeidsplassen.internalad.indexer.feed.AdTransport
 import no.nav.arbeidsplassen.internalad.indexer.feed.FeedConnector
 import no.nav.arbeidsplassen.internalad.indexer.index.AdTopicListener
+import org.apache.kafka.clients.producer.KafkaProducer
+import org.apache.kafka.clients.producer.Producer
+import org.apache.kafka.clients.producer.ProducerRecord
+import org.apache.kafka.common.serialization.StringSerializer
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
@@ -37,6 +44,8 @@ class FeedConnectorTest : TestPropertyProvider {
 
     @Inject
     lateinit var kafkaListener: AdTopicListener
+
+    lateinit var kafkaProducer: Producer<String, String>
 
     companion object {
         private val wireMockServer: WireMockServer = WireMockServer(9001)
@@ -72,7 +81,12 @@ class FeedConnectorTest : TestPropertyProvider {
 
     @BeforeAll
     fun initKafka() {
+        val props: Map<String, String> = hashMapOf(Pair("bootstrap.servers", kafkaContainer.bootstrapServers))
+
+        kafkaProducer = KafkaProducer<String, String>(props,
+            StringSerializer(), StringSerializer())
     }
+
     @AfterAll
     fun tearDownWiremock() {
         wireMockServer.shutdownServer()
@@ -88,8 +102,14 @@ class FeedConnectorTest : TestPropertyProvider {
     }
 
     @Test
+    @Property(name = "adlistener.useBogusIndexer", value = "false")
     fun kafkaListenerTest() {
-        //KafkaCl
+        LOG.info("PRE SEND")
+        kafkaProducer.send(ProducerRecord("StillingIntern", "42d050eb-87ea-4057-8dd8-27827ec3cd74", feedTransportJSON))
+        kafkaProducer.flush()
+        LOG.info("POST SEND")
+
+        Thread.sleep(25000L)
     }
 
     @MockBean(DefaultHttpClient::class)

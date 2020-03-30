@@ -1,9 +1,11 @@
 package no.nav.arbeidsplassen.internalad.indexer.index
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.micronaut.configuration.kafka.annotation.KafkaListener
 import io.micronaut.configuration.kafka.annotation.OffsetReset
 import io.micronaut.configuration.kafka.annotation.OffsetStrategy
 import io.micronaut.configuration.kafka.annotation.Topic
+import io.micronaut.context.annotation.Value
 import io.micronaut.messaging.Acknowledgement
 import no.nav.arbeidsplassen.internalad.indexer.feed.AdTransport
 import org.apache.kafka.clients.consumer.ConsumerRecords
@@ -23,20 +25,20 @@ import java.util.*
         offsetReset = OffsetReset.EARLIEST,
         batch = true,
         offsetStrategy = OffsetStrategy.DISABLED)
-class AdTopicListener(private val indexerService: IndexerService) {
+class AdTopicListener(private val indexerService: IndexerService,
+                      @Value("\${adlistener.useBogusIndexer:true}") private val useBogusIndexer: Boolean,
+                    private val objectMapper: ObjectMapper) {
     companion object {
         private val LOG = LoggerFactory.getLogger(AdTopicListener::class.java)
     }
 
-    private val useBogusIndexer = true
-
     @Topic("\${adlistener.topic:StillingIntern}")
-    fun receive(records: ConsumerRecords<String, AdTransport>, ack: Acknowledgement) {
+    fun receive(records: ConsumerRecords<String, String>, ack: Acknowledgement) {
         val ids = records.map { record -> record.key() }
         LOG.info("Received batch with {} ads with ids: {}",
                 ids.size, ids.joinToString())
         try {
-            val ads = records.map { record -> record.value() }
+            val ads = records.map { record -> convertToAd(record.value()) }
 
             val bulkResponse = if (useBogusIndexer) bogusbulkIndex(ads) else indexerService.bulkIndex(ads)
             val adTransport = ads[ads.size - 1]
@@ -65,6 +67,11 @@ class AdTopicListener(private val indexerService: IndexerService) {
         }
     }
 
+    private fun convertToAd(adAsString : String) : AdTransport {
+        LOG.info("Ad as string: $adAsString")
+        val ad = objectMapper.readValue(adAsString, AdTransport::class.java)
+        return ad
+    }
 
     private fun bogusbulkIndex(ads: List<AdTransport>) : BulkResponse {
         val failureFactor = 1.0/20;

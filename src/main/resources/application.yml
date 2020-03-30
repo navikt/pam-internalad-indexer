@@ -31,6 +31,8 @@ shedlock:
   defaults:
     lock-at-most-for: 5m
 kafka:
+  key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
   bootstrap:
     servers: ${KAFKA_BOOTSTRAP_SERVERS:10.184.160.37:8443,10.184.160.38:8443,10.184.32.22:8443,10.184.160.39:8443,10.184.32.53:8443,10.184.32.58:8443}
   ssl:
@@ -49,6 +51,7 @@ kafka:
 adlistener:
   group-id: internalAd
   topic: StillingIntern
+  useBogusIndexer: true
 indexer:
   scheduler:
     enabled: true
