@@ -43,6 +43,10 @@ class IndexerService(val feedTaskService: FeedTaskService,
     companion object {
         private const val FETCH_INTERNAL_ADS = "fetchInternalAds"
         private val LOG = LoggerFactory.getLogger(IndexerService::class.java)
+        private val INTERNALAD_COMMON_SETTINGS = IndexerService::class.java
+                        .getResource("/internalad-common.json").readText()
+        private val INTERNALAD_MAPPING = IndexerService::class.java
+                        .getResource("/internalad-mapping.json").readText()
     }
 
     init {
