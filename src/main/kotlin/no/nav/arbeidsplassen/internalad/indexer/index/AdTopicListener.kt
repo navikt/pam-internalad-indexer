@@ -1,92 +1,75 @@
 package no.nav.arbeidsplassen.internalad.indexer.index
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.micronaut.configuration.kafka.annotation.KafkaListener
-import io.micronaut.configuration.kafka.annotation.OffsetReset
-import io.micronaut.configuration.kafka.annotation.OffsetStrategy
-import io.micronaut.configuration.kafka.annotation.Topic
+import io.micronaut.configuration.kafka.annotation.*
 import io.micronaut.context.annotation.Value
-import io.micronaut.messaging.Acknowledgement
 import no.nav.arbeidsplassen.internalad.indexer.feed.AdTransport
-import org.apache.kafka.clients.consumer.ConsumerRecords
-import org.elasticsearch.action.DocWriteRequest
-import org.elasticsearch.action.DocWriteResponse
-import org.elasticsearch.action.bulk.BulkItemResponse
-import org.elasticsearch.action.bulk.BulkResponse
-import org.elasticsearch.action.update.UpdateResponse
-import org.elasticsearch.index.shard.ShardId
+import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.elasticsearch.rest.RestStatus
 import org.slf4j.LoggerFactory
-import java.lang.NullPointerException
-import java.util.*
 
 @KafkaListener(groupId="\${adlistener.group-id:internalAd}",
         threads = 1,
         offsetReset = OffsetReset.EARLIEST,
         batch = true,
         offsetStrategy = OffsetStrategy.DISABLED)
-class AdTopicListener(private val indexerService: IndexerService,
-                      @Value("\${adlistener.useBogusIndexer:true}") private val useBogusIndexer: Boolean,
+class AdTopicListener(private val indexerService: AdIndexer,
                     private val objectMapper: ObjectMapper) {
     companion object {
         private val LOG = LoggerFactory.getLogger(AdTopicListener::class.java)
     }
 
     @Topic("\${adlistener.topic:StillingIntern}")
-    fun receive(records: ConsumerRecords<String, String>, ack: Acknowledgement) {
-        val ids = records.map { record -> record.key() }
+    fun receive(jsonAds: List<String>,
+                @KafkaKey ids : List<String>,
+                offsets: List<Long>,
+                partitions: List<Integer>,
+                topics: List<String>,
+                consumer: KafkaConsumer<String, String>) {
+
         LOG.info("Received batch with {} ads with ids: {}",
                 ids.size, ids.joinToString())
         try {
-            val ads = records.map { record -> convertToAd(record.value()) }
+            var idx = 0;
+            val ads = jsonAds.map { jsonAd -> convertToAd(jsonAd, ids[idx++]) }
+                    .filterNotNull()
 
-            val bulkResponse = if (useBogusIndexer) bogusbulkIndex(ads) else indexerService.bulkIndex(ads)
-            val adTransport = ads[ads.size - 1]
+            val indexResponse = indexerService.index(ads)
+            val adTransport = ads[ads.lastIndex]
 
-            if (bulkResponse.status() == RestStatus.OK && !bulkResponse.hasFailures()) {
-                LOG.info("indexed ${bulkResponse.items.size} items received from kafka")
+            if (indexResponse.status == RestStatus.OK && !indexResponse.hasFailures) {
+                LOG.info("indexed ${indexResponse.numItems} items received from kafka")
                 LOG.info("Last date received: ${adTransport.updated}, partition: {} offset: {}",
-                        records.last().partition(), records.last().offset())
-
-                ack.ack()
+                        partitions[partitions.lastIndex],
+                        offsets[offsets.lastIndex])
+                consumer.commitSync()
             } else {
-                LOG.error("We got error while indexing: ${bulkResponse.buildFailureMessage()}. " +
+                LOG.error("We got an error while indexing: ${indexResponse.failureMessage}. " +
                         "Number of ads in batch: {} Last date in batch: {} partition: {} offset: {}. Ads in batch: {}",
-                        ids.size, adTransport.updated, records.last().partition(), records.last().offset(), ids.joinToString())
-                ack.nack()
+                        ids.size, adTransport.updated,
+                        partitions[partitions.lastIndex],
+                        offsets[offsets.lastIndex], ids.joinToString())
             }
 
         } catch (e: Exception) {
-            // TODO We don'† distiguish between infrastructure errors and application errors
-            //      Thus we need a way to handle poison pills
+            // TODO We don'† distinguish between infrastructure errors and application errors
+            //      Thus, we need a way to handle poison pills
             LOG.error("We got exception while indexing. " +
                     "Number of ads in batch: {} partition: {} offset: {}. Ads in batch: {}. Errormessage: {}",
-                    ids.size, records.last().partition(), records.last().offset(), ids.joinToString(),
+                    jsonAds.size, partitions[partitions.lastIndex],
+                    offsets[offsets.lastIndex], ids.joinToString(),
                     e.message, e)
-            ack.nack()
         }
     }
 
-    private fun convertToAd(adAsString : String) : AdTransport {
-        LOG.info("Ad as string: $adAsString")
-        val ad = objectMapper.readValue(adAsString, AdTransport::class.java)
-        return ad
-    }
-
-    private fun bogusbulkIndex(ads: List<AdTransport>) : BulkResponse {
-        val failureFactor = 1.0/20;
-        var i : Int = 0;
-        if (Math.random() > failureFactor) {
-            val responses = List(ads.size) {
-                BulkItemResponse(i++, DocWriteRequest.OpType.UPDATE,
-                        UpdateResponse(ShardId("id", UUID.randomUUID().toString(),1), "Ad", "$i",
-                                i.toLong(), 1L, 1L, DocWriteResponse.Result.UPDATED))
-            }.toTypedArray()
-            return BulkResponse(responses, 1234L)
-        } else {
-            return BulkResponse(arrayOf(
-            BulkItemResponse(1, DocWriteRequest.OpType.UPDATE,
-                BulkItemResponse.Failure("idc", "ads", "id1", NullPointerException(), RestStatus.BAD_REQUEST))), 123L)
+    private fun convertToAd(adAsString : String, adId : String) : AdTransport? {
+        try {
+            val ad = objectMapper.readValue(adAsString, AdTransport::class.java)
+            return ad
+        } catch (e : java.lang.Exception) {
+            LOG.error("Failed to deserialize ad {}. Error: {}, json ad: {}", adId,
+                e.message, adAsString)
+            return null
         }
     }
 }
