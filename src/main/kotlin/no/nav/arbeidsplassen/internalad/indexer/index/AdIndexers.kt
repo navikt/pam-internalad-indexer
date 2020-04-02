@@ -42,7 +42,7 @@ class ElasticIndexer(private val indexerService: IndexerService) : AdIndexer {
 }
 
 
-open class DummyIndexer(private val failureFactor : Double = 1.0/20) : AdIndexer {
+open class DummyIndexer(private val failureFactor : Double = 1.0/20000) : AdIndexer {
     override fun index(ads: List<AdTransport>): IndexResponse {
         var i : Int = 0;
         if (Math.random() < failureFactor) {
