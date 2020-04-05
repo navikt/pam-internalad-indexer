@@ -1,3 +1,5 @@
+![Build](https://github.com/navikt/pam-internalad-indexer/workflows/Build/badge.svg?branch=master)
+
 # pam-internalad-indexer
 
 ## How to reindex
