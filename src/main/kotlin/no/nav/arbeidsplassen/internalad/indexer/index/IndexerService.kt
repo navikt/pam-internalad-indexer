@@ -129,6 +129,12 @@ class IndexerService(val feedTaskService: FeedTaskService,
         return lastUpdated
     }
 
+    public fun bulkIndex(ads: List<AdTransport>, indexName: String = INTERNALAD) : BulkResponse {
+        val adStream = adPipelineFactory.toPipelineStream(ads)
+        val bulkResponse = indexBulk(adStream, indexName)
+        return bulkResponse
+    }
+
     private fun indexBulk(ads: Stream<PipelineItem>, indexName: String): BulkResponse {
         val bulkRequest = BulkRequest()
         ads.forEach {

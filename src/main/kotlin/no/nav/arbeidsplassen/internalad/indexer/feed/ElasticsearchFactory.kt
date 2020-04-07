@@ -2,7 +2,6 @@ package no.nav.arbeidsplassen.internalad.indexer.feed
 
 import io.micronaut.context.annotation.Factory
 import io.micronaut.context.annotation.Value
-import net.javacrumbs.shedlock.core.LockProvider
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
