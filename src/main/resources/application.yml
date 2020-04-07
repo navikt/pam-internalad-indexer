@@ -37,7 +37,7 @@ kafka:
     servers: ${KAFKA_BOOTSTRAP_SERVERS:10.184.160.37:8443,10.184.160.38:8443,10.184.32.22:8443,10.184.160.39:8443,10.184.32.53:8443,10.184.32.58:8443}
   ssl:
     truststore:
-      location: file:${NAV_TRUSTSTORE_PATH}
+      location: ${NAV_TRUSTSTORE_PATH}
       password: ${NAV_TRUSTSTORE_PASSWORD}
   sasl:
     mechanism: PLAIN
