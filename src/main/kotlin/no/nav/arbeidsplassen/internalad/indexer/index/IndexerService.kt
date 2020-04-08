@@ -38,6 +38,7 @@ class IndexerService(val feedTaskService: FeedTaskService,
                      val objectMapper: ObjectMapper,
                      @Value("\${indexer.ads.from}") val months: Long = 24,
                      @Value("\${feed.ad.url}") val adUrl: String,
+                     @Value("\${feed.ad.enabled:true}") val feedEnabled: Boolean,
                      val adPipelineFactory: PipelineFactory) {
 
     companion object {
@@ -90,20 +91,23 @@ class IndexerService(val feedTaskService: FeedTaskService,
     }
 
     fun fetchFeedIndexAds() {
-        val lastRunDate = feedTaskService.fetchLastRunDateForJob(FETCH_INTERNAL_ADS) ?: getDefaultStartTime()
-        val ads = feedConnector.fetchContentList( adUrl, lastRunDate, AdTransport::class.java)
-        if (ads.isNotEmpty()) {
-            val adStream = adPipelineFactory.toPipelineStream(ads)
-            val bulkResponse = indexBulk(adStream, INTERNALAD)
-            if (bulkResponse.status() == RestStatus.OK && !bulkResponse.hasFailures()) {
-                LOG.info("indexed ${bulkResponse.items.size} items")
-                val adTransport = ads[ads.size - 1]
-                feedTaskService.save(FETCH_INTERNAL_ADS, adTransport.updated)
-                LOG.info("Last date is set to ${adTransport.updated}")
+        if (feedEnabled) {
+            val lastRunDate = feedTaskService.fetchLastRunDateForJob(FETCH_INTERNAL_ADS) ?: getDefaultStartTime()
+            val ads = feedConnector.fetchContentList(adUrl, lastRunDate, AdTransport::class.java)
+            if (ads.isNotEmpty()) {
+                val adStream = adPipelineFactory.toPipelineStream(ads)
+                val bulkResponse = indexBulk(adStream, INTERNALAD)
+                if (bulkResponse.status() == RestStatus.OK && !bulkResponse.hasFailures()) {
+                    LOG.info("indexed ${bulkResponse.items.size} items")
+                    val adTransport = ads[ads.size - 1]
+                    feedTaskService.save(FETCH_INTERNAL_ADS, adTransport.updated)
+                    LOG.info("Last date is set to ${adTransport.updated}")
+                } else {
+                    LOG.error("We got error while indexing: ${bulkResponse.buildFailureMessage()}")
+                }
             }
-            else {
-                LOG.error("We got error while indexing: ${bulkResponse.buildFailureMessage()}")
-            }
+        } else {
+            LOG.info("Fetching from feed is disabled.")
         }
     }
 

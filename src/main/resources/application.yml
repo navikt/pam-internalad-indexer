@@ -27,6 +27,7 @@ feed:
   ad:
     url: http://localhost:9001/api/v1/ads
     pagesize: 100
+    enabled: false
 shedlock:
   defaults:
     lock-at-most-for: 5m
@@ -53,7 +54,7 @@ kafka:
 adlistener:
   group-id: internalAd
   topic: StillingIntern
-  useDummyIndexer: true
+  useDummyIndexer: false
 indexer:
   scheduler:
     enabled: true
