@@ -1,5 +1,5 @@
-![Build](https://github.com/navikt/pam-internalad-indexer/workflows/Build/badge.svg?branch=master)
-
+![build-deploy-dev](https://github.com/navikt/pam-internalad-indexer/workflows/build-deploy-dev/badge.svg)
+![deploy-prod](https://github.com/navikt/pam-internalad-indexer/workflows/deploy-prod/badge.svg)
 # pam-internalad-indexer
 
 ## How to reindex
