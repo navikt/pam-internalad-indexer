@@ -15,9 +15,9 @@ import org.elasticsearch.client.RestHighLevelClient
 import javax.inject.Singleton
 
 @Factory
-class ElasticsearchFactory(@Value("\${elasticsearch.url}") val esUrl: String,
-                           @Value("\${elasticsearch.user}") val user: String,
-                           @Value("\${elasticsearch.password}") val password: String) {
+class ElasticsearchFactory(@Value("\${elasticsearch.url:http://localhost:9200}") val esUrl: String,
+                           @Value("\${elasticsearch.user:foo}") val user: String,
+                           @Value("\${elasticsearch.password:bar}") val password: String) {
 
     @Singleton
     fun feedTaskService(elasticsearchFeedRepository: ElasticsearchFeedRepository): FeedTaskService {

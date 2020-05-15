@@ -1,6 +1,7 @@
 package no.nav.arbeidsplassen.internalad.indexer.process
 
 import com.fasterxml.jackson.core.JsonPointer
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import java.util.function.Consumer
@@ -17,7 +18,7 @@ class JsonStringExploder(val objectMapper: ObjectMapper,
         try {
             val explodedValue = objectMapper.readTree(node.textValue())
             val parent = item.document.at(jsonPointer.head()) as ObjectNode
-            parent[jsonPointer.last().matchingProperty] = explodedValue
+            parent.set<JsonNode>(jsonPointer.last().matchingProperty, explodedValue)
         } catch (e: Exception) {
             if (failOnParseError) {
                 throw RuntimeException(e)

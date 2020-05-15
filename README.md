@@ -2,20 +2,16 @@
 ![deploy-prod](https://github.com/navikt/pam-internalad-indexer/workflows/deploy-prod/badge.svg)
 # pam-internalad-indexer
 
-## How to reindex
+### Prerequisite
+* Elasticsearch
+* Kafka with StillingIntern topic
 
-```
-curl -XPOST 'http://localhost:8080/internal/reindex?indexName={indexname}&from={date}'
-curl -XPUT 'http://localhost:8080/internal/schedulerlocks?name=fetchFeedAndIndexAds&minutes=10'
-curl -XPUT 'http://localhost:8080/internal/aliases?indexName={indexname}'
-```
+### How to run
 
-## Rest lastupdated time for feedtask
+TODO
 
-```
-curl 'http://localhost:8080/internal/feedtasks'
-curl -XPUT 'http://localhost:8080/internal/feedtasks?name=fetchInternalAds&lastRun=2020-03-14T11:00:00'
+### How to reindex
 
-```
+TODO
 
 
