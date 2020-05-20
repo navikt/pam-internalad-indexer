@@ -32,25 +32,10 @@ shedlock:
   defaults:
     lock-at-most-for: 5m
 kafka:
-  key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-  value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
   health:
     enabled: false
   bootstrap:
-    servers: ${KAFKA_BOOTSTRAP_SERVERS:10.184.160.37:8443,10.184.160.38:8443,10.184.32.22:8443,10.184.160.39:8443,10.184.32.53:8443,10.184.32.58:8443}
-  ssl:
-    truststore:
-      location: ${NAV_TRUSTSTORE_PATH}
-      password: ${NAV_TRUSTSTORE_PASSWORD}
-  sasl:
-    mechanism: PLAIN
-    jaas:
-      config: 'org.apache.kafka.common.security.plain.PlainLoginModule required username=${KAFKA_USERNAME} password=${KAFKA_PASSWORD};'
-  security:
-    protocol: SASL_SSL
-  schema:
-    registry:
-      url: ${SCHEMA_REGISTRY_URL:https://kafka-schema-registry.nais.adeo.no}
+    servers: ${KAFKA_BOOTSTRAP_SERVERS}
 adlistener:
   group-id: internalAd
   topic: StillingIntern
