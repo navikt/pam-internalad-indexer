@@ -1,3 +1,4 @@
 {
-  "ingress": "https://pam-internalad-indexer.nais.oera-q.local"
+  "ingress": "https://pam-internalad-indexer.nais.oera-q.local",
+  "serviceuser-credentials": "serviceuser/data/dev/srvpaminternadindex"
 }

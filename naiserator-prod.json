@@ -1,3 +1,4 @@
 {
-  "ingress": "https://pam-internalad-indexer.nais.oera.no"
+  "ingress": "https://pam-internalad-indexer.nais.oera.no",
+  "serviceuser-credentials": "serviceuser/data/prod/srvpaminternadindex"
 }
