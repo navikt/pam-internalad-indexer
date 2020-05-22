@@ -6,7 +6,6 @@
         </encoder>
     </appender>
     <logger name="no.nav.arbeidsplassen" level="DEBUG" />
-    <logger name="io.micronaut.context.condition" level="TRACE" />
     <root level="INFO">
         <appender-ref ref="stdout"/>
     </root>
