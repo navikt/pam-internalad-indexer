@@ -39,7 +39,6 @@ kafka:
 adlistener:
   group-id: internalAd
   topic: StillingIntern
-  useDummyIndexer: false
 indexer:
   scheduler:
     enabled: true
