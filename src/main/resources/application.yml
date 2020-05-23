@@ -27,7 +27,6 @@ feed:
   ad:
     url: http://localhost:9001/api/v1/ads
     pagesize: 100
-    enabled: false
 shedlock:
   defaults:
     lock-at-most-for: 5m
@@ -41,6 +40,12 @@ adlistener:
   topic: StillingIntern
 indexer:
   scheduler:
-    enabled: true
+    feed:
+      enabled: false
+    delete:
+      enabled: true
   ads:
     from: 24 #now-24month
+  kafka:
+    enabled: true
+#    offsettimestamp: "2019-01-01T00:00:00Z"

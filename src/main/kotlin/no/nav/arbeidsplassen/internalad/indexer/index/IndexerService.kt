@@ -38,16 +38,15 @@ class IndexerService(val feedTaskService: FeedTaskService,
                      val objectMapper: ObjectMapper,
                      @Value("\${indexer.ads.from}") val months: Long = 24,
                      @Value("\${feed.ad.url}") val adUrl: String,
-                     @Value("\${feed.ad.enabled:true}") val feedEnabled: Boolean,
                      val adPipelineFactory: PipelineFactory) {
 
     companion object {
         private const val FETCH_INTERNAL_ADS = "fetchInternalAds"
         private val LOG = LoggerFactory.getLogger(IndexerService::class.java)
         private val INTERNALAD_COMMON_SETTINGS = IndexerService::class.java
-                        .getResource("/internalad-common.json").readText()
+                .getResource("/internalad-common.json").readText()
         private val INTERNALAD_MAPPING = IndexerService::class.java
-                        .getResource("/internalad-mapping.json").readText()
+                .getResource("/internalad-mapping.json").readText()
     }
 
     init {
@@ -91,39 +90,34 @@ class IndexerService(val feedTaskService: FeedTaskService,
     }
 
     fun fetchFeedIndexAds() {
-        if (feedEnabled) {
-            val lastRunDate = feedTaskService.fetchLastRunDateForJob(FETCH_INTERNAL_ADS) ?: getDefaultStartTime()
-            val ads = feedConnector.fetchContentList(adUrl, lastRunDate, AdTransport::class.java)
-            if (ads.isNotEmpty()) {
-                val adStream = adPipelineFactory.toPipelineStream(ads)
-                val bulkResponse = indexBulk(adStream, INTERNALAD)
-                if (bulkResponse.status() == RestStatus.OK && !bulkResponse.hasFailures()) {
-                    LOG.info("indexed ${bulkResponse.items.size} items")
-                    val adTransport = ads[ads.size - 1]
-                    feedTaskService.save(FETCH_INTERNAL_ADS, adTransport.updated)
-                    LOG.info("Last date is set to ${adTransport.updated}")
-                } else {
-                    LOG.error("We got error while indexing: ${bulkResponse.buildFailureMessage()}")
-                }
+        val lastRunDate = feedTaskService.fetchLastRunDateForJob(FETCH_INTERNAL_ADS) ?: getDefaultStartTime()
+        val ads = feedConnector.fetchContentList(adUrl, lastRunDate, AdTransport::class.java)
+        if (ads.isNotEmpty()) {
+            val adStream = adPipelineFactory.toPipelineStream(ads)
+            val bulkResponse = indexBulk(adStream, INTERNALAD)
+            if (bulkResponse.status() == RestStatus.OK && !bulkResponse.hasFailures()) {
+                LOG.info("indexed ${bulkResponse.items.size} items")
+                val adTransport = ads[ads.size - 1]
+                feedTaskService.save(FETCH_INTERNAL_ADS, adTransport.updated)
+                LOG.info("Last date is set to ${adTransport.updated}")
+            } else {
+                LOG.error("We got error while indexing: ${bulkResponse.buildFailureMessage()}")
             }
-        } else {
-            LOG.info("Fetching from feed is disabled.")
         }
     }
 
     fun fetchFeedIndexAdsUntilNow(from: LocalDateTime, indexName: String): LocalDateTime {
         LOG.info("Fetch feed from ${from} and index to ${indexName}")
-        var ads = feedConnector.fetchContentList( adUrl, from, AdTransport::class.java)
+        var ads = feedConnector.fetchContentList(adUrl, from, AdTransport::class.java)
         var lastUpdated = from
-        while(ads.isNotEmpty())   {
+        while (ads.isNotEmpty()) {
             val adStream = adPipelineFactory.toPipelineStream(ads)
             val bulkResponse = indexBulk(adStream, indexName)
             if (bulkResponse.status() == RestStatus.OK && !bulkResponse.hasFailures() && ads[ads.size - 1].updated.isAfter(lastUpdated)) {
                 lastUpdated = ads[ads.size - 1].updated
                 LOG.info("Last updated time set to $lastUpdated")
                 ads = feedConnector.fetchContentList(adUrl, lastUpdated, AdTransport::class.java)
-            }
-            else {
+            } else {
                 if (bulkResponse.hasFailures()) {
                     LOG.error("We got error while indexing: ${bulkResponse.buildFailureMessage()}")
                 }
@@ -133,7 +127,7 @@ class IndexerService(val feedTaskService: FeedTaskService,
         return lastUpdated
     }
 
-    public fun bulkIndex(ads: List<AdTransport>, indexName: String = INTERNALAD) : BulkResponse {
+    public fun bulkIndex(ads: List<AdTransport>, indexName: String = INTERNALAD): BulkResponse {
         val adStream = adPipelineFactory.toPipelineStream(ads)
         val bulkResponse = indexBulk(adStream, indexName)
         return bulkResponse
@@ -153,10 +147,10 @@ class IndexerService(val feedTaskService: FeedTaskService,
     fun fetchLastUpdatedTimeForIndex(indexName: String): LocalDateTime {
         val searchRequest = SearchRequest(indexName)
         val sourceBuilder = SearchSourceBuilder()
-                            .size(1)
-                            .sort(SortBuilders
-                                    .fieldSort("updated")
-                                    .order(SortOrder.DESC))
+                .size(1)
+                .sort(SortBuilders
+                        .fieldSort("updated")
+                        .order(SortOrder.DESC))
         sourceBuilder.query(MatchAllQueryBuilder())
         searchRequest.source(sourceBuilder)
         val searchResponse = client.search(searchRequest, RequestOptions.DEFAULT)
