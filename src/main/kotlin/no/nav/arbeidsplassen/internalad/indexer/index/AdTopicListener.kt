@@ -1,20 +1,30 @@
 package no.nav.arbeidsplassen.internalad.indexer.index
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import io.micronaut.configuration.kafka.annotation.*
-import io.micronaut.configuration.kafka.exceptions.KafkaListenerException
+import io.micronaut.configuration.kafka.ConsumerAware
+import io.micronaut.configuration.kafka.annotation.KafkaListener
+import io.micronaut.configuration.kafka.annotation.OffsetReset
+import io.micronaut.configuration.kafka.annotation.OffsetStrategy
+import io.micronaut.configuration.kafka.annotation.Topic
+import io.micronaut.context.annotation.Requires
 import io.micronaut.context.annotation.Value
+import io.micronaut.core.convert.format.Format
 import no.nav.arbeidsplassen.internalad.indexer.feed.AdTransport
-import org.apache.kafka.clients.consumer.KafkaConsumer
+import org.apache.kafka.clients.consumer.Consumer
+import org.apache.kafka.clients.consumer.ConsumerRebalanceListener
+import org.apache.kafka.common.TopicPartition
 import org.elasticsearch.rest.RestStatus
 import org.slf4j.LoggerFactory
+import java.time.LocalDateTime
+import java.time.ZoneId
 
-@KafkaListener(groupId = "\${adlistener.group-id:internalAd}",
-        threads = 1,
-        offsetReset = OffsetReset.EARLIEST,
-        batch = true,
-        offsetStrategy = OffsetStrategy.SYNC)
-class AdTopicListener(private val indexerService: AdIndexer) {
+@KafkaListener(groupId = "\${adlistener.group-id:internalAd}", threads = 1, offsetReset = OffsetReset.EARLIEST,
+        batch = true, offsetStrategy = OffsetStrategy.SYNC)
+@Requires(property = "indexer.kafka.enabled", value = "true")
+class AdTopicListener(private val indexerService: AdIndexer,
+                      @Value("\${indexer.kafka.offsettimestamp}")
+                      @Format("yyyy-MM-dd'T'HH:mm:ss'Z'") private val offsetTimeStamp: LocalDateTime?): ConsumerRebalanceListener, ConsumerAware<Any, Any> {
+
+    private lateinit var consumer: Consumer<Any,Any>
 
     companion object {
         private val LOG = LoggerFactory.getLogger(AdTopicListener::class.java)
@@ -35,4 +45,25 @@ class AdTopicListener(private val indexerService: AdIndexer) {
             }
         }
      }
+
+    override fun onPartitionsAssigned(partitions: MutableCollection<TopicPartition>) {
+        if (offsetTimeStamp!=null) {
+            LOG.info("Resetting offset for timestamp {}", offsetTimeStamp)
+            val topicPartitionTimestamp = partitions.map { it to offsetTimeStamp.toMillis() }.toMap()
+            val partitionOffsetMap = consumer.offsetsForTimes(topicPartitionTimestamp)
+            partitionOffsetMap.forEach { (topic, timestamp) -> consumer.seek(topic, timestamp.offset()) }
+        }
+    }
+
+    override fun onPartitionsRevoked(partitions: MutableCollection<TopicPartition>?) {
+        LOG.info("onPartionsRevoked is called")
+    }
+
+    override fun setKafkaConsumer(consumer: Consumer<Any, Any>) {
+        this.consumer = consumer
+    }
+}
+
+fun LocalDateTime.toMillis(): Long {
+    return this.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 }
