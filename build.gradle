@@ -43,7 +43,6 @@ dependencies {
     runtimeOnly "net.logstash.logback:logstash-logback-encoder:6.2"
     testImplementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     testImplementation "io.micronaut.test:micronaut-test-junit5:1.1.2"
-    testImplementation "org.mockito:mockito-junit-jupiter:2.22.0"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:5.1.0"
     testImplementation "com.github.tomakehurst:wiremock-jre8:2.26.3"
     testCompile "org.testcontainers:kafka:1.13.0"

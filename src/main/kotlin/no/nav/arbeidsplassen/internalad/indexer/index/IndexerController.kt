@@ -1,16 +1,13 @@
 package no.nav.arbeidsplassen.internalad.indexer.index
 
 import com.fasterxml.jackson.databind.JsonNode
-import io.micronaut.core.convert.format.Format
 import io.micronaut.http.annotation.*
 import net.javacrumbs.shedlock.core.LockConfiguration
-import net.javacrumbs.shedlock.core.SimpleLock
 import no.nav.arbeidsplassen.internalad.indexer.feed.ElasticsearchFeedRepository
 import no.nav.arbeidsplassen.internalad.indexer.feed.FeedTask
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.time.LocalDateTime
-import java.util.*
 
 @Controller("/internal")
 class IndexerController(val indexerService: IndexerService,
@@ -28,10 +25,7 @@ class IndexerController(val indexerService: IndexerService,
 
     @Post("/reindex")
     fun reindex(@QueryValue indexName: String, @QueryValue from: String): IndexerResponse {
-        val fromDate = if (from.isNullOrEmpty()) indexerService.getDefaultStartTime() else
-                LocalDateTime.parse(from)
-        val updatedSince = if (indexerService.createIndex(indexName)) fromDate else indexerService.fetchLastUpdatedTimeForIndex(indexName)
-        return IndexerResponse(indexName, indexerService.fetchFeedIndexAdsUntilNow(updatedSince, indexName))
+        TODO()
     }
 
     @Put("/aliases")
