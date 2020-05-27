@@ -21,6 +21,7 @@ import org.junit.jupiter.api.TestInstance
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.testcontainers.containers.KafkaContainer
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -81,15 +82,15 @@ class MyIndexerService: AdIndexer {
         return IndexResponse(hasFailures = false, status = RestStatus.OK, numItems = 1, failureMessage = "")
     }
     override fun index(ads: List<AdTransport>, indexName: String): IndexResponse {
-        TODO()
+        return IndexResponse(hasFailures = false, status = RestStatus.OK, numItems = 1, failureMessage = "")
     }
 
     override fun createIndex(indexName: String): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 
     override fun fetchLastUpdatedTimeForIndex(indexName: String): LocalDateTime {
-        TODO("Not yet implemented")
+        return LocalDateTime.now()
     }
 }
 

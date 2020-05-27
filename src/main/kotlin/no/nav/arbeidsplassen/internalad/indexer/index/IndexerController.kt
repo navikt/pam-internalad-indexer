@@ -23,11 +23,6 @@ class IndexerController(val indexerService: IndexerService,
         return indexerService.fetchLastUpdatedTimeForIndex(indexName)
     }
 
-    @Post("/reindex")
-    fun reindex(@QueryValue indexName: String, @QueryValue from: String): IndexerResponse {
-        TODO()
-    }
-
     @Put("/aliases")
     fun updateAliases(@QueryValue indexName: String): Boolean {
         return indexerService.updateAlias(indexName)

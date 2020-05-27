@@ -45,7 +45,7 @@ class AdTopicReIndexListener(private val indexerService: AdIndexer,
     fun receive(ads: List<AdTransport>, offsets: List<Long>) {
         LOG.info("Re-indexed received batch with {} ads", ads.size)
         if (ads.isNotEmpty()) {
-            val indexResponse = indexerService.index(ads, indexName!!)
+            val indexResponse = indexerService.index(ads, indexName)
             val last = ads.last()
             if (indexResponse.status == RestStatus.OK && !indexResponse.hasFailures) {
                 LOG.info("Re-indexed ${indexResponse.numItems}")
