@@ -8,19 +8,6 @@ import javax.inject.Singleton
 
 @Around
 @Singleton
-@Requires(property = "indexer.scheduler.feed.enabled", value = "true")
-class IndexerSchedulerTask(val indexerService: IndexerService) {
-
-    @Scheduled(cron = "5,20,35,50 * * * * *")
-    @SchedulerLock(name = "fetchFeedAndIndexAds")
-    fun fetchAdsAndIndex() {
-        indexerService.fetchFeedIndexAds()
-    }
-
-}
-
-@Around
-@Singleton
 @Requires(property = "indexer.scheduler.delete.enabled", value = "true")
 class DeleteIndexerSchedulerTask(val indexerService: IndexerService) {
 
