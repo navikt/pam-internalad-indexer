@@ -1,6 +1,7 @@
 package no.nav.arbeidsplassen.internalad.indexer.index
 
 import com.fasterxml.jackson.databind.JsonNode
+import io.micronaut.configuration.kafka.ConsumerRegistry
 import io.micronaut.http.annotation.*
 import net.javacrumbs.shedlock.core.LockConfiguration
 import no.nav.arbeidsplassen.internalad.indexer.feed.ElasticsearchFeedRepository
@@ -10,9 +11,10 @@ import java.time.Instant
 import java.time.LocalDateTime
 
 @Controller("/internal")
-class IndexerController(val indexerService: IndexerService,
-                        val feedTaskRepository: ElasticsearchFeedRepository,
-                        val lockProvider: ElasticsearchLockProvider) {
+class IndexerController(private val indexerService: IndexerService,
+                        private val feedTaskRepository: ElasticsearchFeedRepository,
+                        private val lockProvider: ElasticsearchLockProvider,
+                        private val consumerRegistry: ConsumerRegistry) {
 
     companion object {
         private val LOG = LoggerFactory.getLogger(IndexerController::class.java)
@@ -52,6 +54,28 @@ class IndexerController(val indexerService: IndexerService,
         return lock.isPresent
     }
 
-}
+    @Put("/indexer/pause")
+    fun pauseIndexer(): String {
+        LOG.info("Pausing indexer")
+        consumerRegistry.consumerIds
+                .filter { it.startsWith("internalad-indexer-ad-topic-listener") }
+                .forEach {
+                    LOG.info("Pausing consumer $it")
+                    consumerRegistry.pause(it)
+                }
+        return "OK, resume with /indexer/resume"
+    }
 
-data class IndexerResponse(val indexName: String, val lastUpdated: LocalDateTime)
+    @Put("/indexer/resume")
+    fun resumeIndexer(): String {
+        LOG.info("Resuming indexer")
+        consumerRegistry.consumerIds
+                .filter { it.startsWith("internalad-indexer-ad-topic-listener") }
+                .forEach {
+                    LOG.info("Resuming consumer $it ")
+                    consumerRegistry.resume(it)
+                }
+        return "OK"
+    }
+
+}
