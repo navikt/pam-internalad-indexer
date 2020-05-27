@@ -35,7 +35,7 @@ import javax.inject.Singleton
 class IndexerService(
                      val client: RestHighLevelClient,
                      val objectMapper: ObjectMapper,
-                     @Value("\${indexer.ads.from}") val months: Long = 24,
+                     @Value("\${indexer.ads.from:24}") val months: Long,
                      val adPipelineFactory: PipelineFactory): AdIndexer {
 
     companion object {
@@ -56,7 +56,7 @@ class IndexerService(
 
     }
 
-    fun createIndex(indexName: String): Boolean {
+    override fun createIndex(indexName: String): Boolean {
         val indexRequest = GetIndexRequest(indexName)
         if (!client.indices().exists(indexRequest, RequestOptions.DEFAULT)) {
             LOG.info("Creating index {} ", indexName)
@@ -94,7 +94,7 @@ class IndexerService(
                 bulkResponse.buildFailureMessage())
     }
 
-    fun index(ads: List<AdTransport>, indexName: String): IndexResponse {
+    override fun index(ads: List<AdTransport>, indexName: String): IndexResponse {
         val bulkResponse = bulkIndex(ads, indexName)
         return IndexResponse(bulkResponse.hasFailures(),
                 bulkResponse.status(),
@@ -119,7 +119,7 @@ class IndexerService(
     }
 
 
-    fun fetchLastUpdatedTimeForIndex(indexName: String): LocalDateTime {
+    override fun fetchLastUpdatedTimeForIndex(indexName: String): LocalDateTime {
         val searchRequest = SearchRequest(indexName)
         val sourceBuilder = SearchSourceBuilder()
                 .size(1)
@@ -145,7 +145,4 @@ class IndexerService(
         LOG.info("Deleted ${response.deleted} ads")
     }
 
-    fun getDefaultStartTime(): LocalDateTime {
-        return LocalDateTime.now().minusMonths(months)
-    }
 }

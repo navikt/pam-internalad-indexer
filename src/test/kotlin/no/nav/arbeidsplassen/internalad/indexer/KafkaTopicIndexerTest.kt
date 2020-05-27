@@ -1,14 +1,9 @@
 package no.nav.arbeidsplassen.internalad.indexer
 
-import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock.*
 import io.micronaut.context.annotation.Primary
 import io.micronaut.context.annotation.Property
 import io.micronaut.context.annotation.Replaces
-import io.micronaut.http.client.DefaultHttpClient
-import io.micronaut.http.client.RxHttpClient
 import io.micronaut.test.annotation.MicronautTest
-import io.micronaut.test.annotation.MockBean
 import io.micronaut.test.support.TestPropertyProvider
 import no.nav.arbeidsplassen.internalad.indexer.feed.AdTransport
 import no.nav.arbeidsplassen.internalad.indexer.index.AdIndexer
@@ -26,6 +21,7 @@ import org.junit.jupiter.api.TestInstance
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.testcontainers.containers.KafkaContainer
+import java.time.LocalDateTime
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
@@ -83,6 +79,17 @@ class MyIndexerService: AdIndexer {
     override fun index(ads: List<AdTransport>): IndexResponse {
         adIndexerLatch.countDown()
         return IndexResponse(hasFailures = false, status = RestStatus.OK, numItems = 1, failureMessage = "")
+    }
+    override fun index(ads: List<AdTransport>, indexName: String): IndexResponse {
+        TODO()
+    }
+
+    override fun createIndex(indexName: String): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun fetchLastUpdatedTimeForIndex(indexName: String): LocalDateTime {
+        TODO("Not yet implemented")
     }
 }
 
