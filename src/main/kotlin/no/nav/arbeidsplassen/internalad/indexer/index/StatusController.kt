@@ -1,10 +1,19 @@
 package no.nav.arbeidsplassen.internalad.indexer.index
 
+import io.micronaut.configuration.kafka.ConsumerRegistry
+import io.micronaut.context.annotation.Value
+import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
+import org.slf4j.LoggerFactory
 
 @Controller("/internal")
-class StatusController {
+class StatusController(private val consumerRegistry: ConsumerRegistry,
+                       @Value("\${indexer.reindex-mode.enabled:false}") private val indexMode: Boolean) {
+
+    companion object {
+        private val LOG = LoggerFactory.getLogger(StatusController::class.java)
+    }
 
     @Get("/isReady")
     fun isReady(): String {
@@ -12,8 +21,15 @@ class StatusController {
     }
 
     @Get("/isAlive")
-    fun isAlive(): String {
-        return "Alive"
+    fun isAlive(): HttpResponse<String> {
+        consumerRegistry.consumerIds.forEach {
+            if ( consumerRegistry.isPaused(it) && !indexMode) {
+                LOG.error("Kafka is not responding for consumer $it")
+                return HttpResponse.serverError("Kafka is not responding for consumer $it")
+            }
+        }
+        return HttpResponse.ok("Alive")
+
     }
 
 }
