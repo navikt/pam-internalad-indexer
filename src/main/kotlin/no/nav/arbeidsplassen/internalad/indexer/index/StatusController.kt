@@ -8,8 +8,7 @@ import io.micronaut.http.annotation.Get
 import org.slf4j.LoggerFactory
 
 @Controller("/internal")
-class StatusController(private val consumerRegistry: ConsumerRegistry,
-                       @Value("\${indexer.reindex-mode.enabled:false}") private val indexMode: Boolean) {
+class StatusController(private val consumerRegistry: ConsumerRegistry) {
 
     companion object {
         private val LOG = LoggerFactory.getLogger(StatusController::class.java)
@@ -23,7 +22,7 @@ class StatusController(private val consumerRegistry: ConsumerRegistry,
     @Get("/isAlive")
     fun isAlive(): HttpResponse<String> {
         consumerRegistry.consumerIds.forEach {
-            if ( consumerRegistry.isPaused(it) && !indexMode) {
+            if ( consumerRegistry.isPaused(it)) {
                 LOG.error("Kafka is not responding for consumer $it")
                 return HttpResponse.serverError("Kafka is not responding for consumer $it")
             }
