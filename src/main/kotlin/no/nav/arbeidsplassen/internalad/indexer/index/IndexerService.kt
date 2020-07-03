@@ -73,7 +73,7 @@ class IndexerService(
 
     fun updateAlias(indexName: String): Boolean {
         val remove = IndicesAliasesRequest.AliasActions(IndicesAliasesRequest.AliasActions.Type.REMOVE)
-                .index("*")
+                .index("$INTERNALAD*")
                 .alias(INTERNALAD)
         val add = IndicesAliasesRequest.AliasActions(IndicesAliasesRequest.AliasActions.Type.ADD)
                 .index(indexName)
