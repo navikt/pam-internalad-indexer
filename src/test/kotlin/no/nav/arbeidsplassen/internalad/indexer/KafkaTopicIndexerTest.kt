@@ -5,7 +5,7 @@ import io.micronaut.context.annotation.Property
 import io.micronaut.context.annotation.Replaces
 import io.micronaut.test.annotation.MicronautTest
 import io.micronaut.test.support.TestPropertyProvider
-import no.nav.arbeidsplassen.internalad.indexer.feed.AdTransport
+import no.nav.arbeidsplassen.internalad.indexer.index.AdTransport
 import no.nav.arbeidsplassen.internalad.indexer.index.AdIndexer
 import no.nav.arbeidsplassen.internalad.indexer.index.IndexResponse
 import no.nav.arbeidsplassen.internalad.indexer.index.IndexerService
@@ -21,7 +21,6 @@ import org.junit.jupiter.api.TestInstance
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.testcontainers.containers.KafkaContainer
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit

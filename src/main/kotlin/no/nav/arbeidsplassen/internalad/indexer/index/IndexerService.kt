@@ -2,9 +2,6 @@ package no.nav.arbeidsplassen.internalad.indexer.index
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.micronaut.context.annotation.Value
-import no.nav.arbeidsplassen.internalad.indexer.feed.AdTransport
-import no.nav.arbeidsplassen.internalad.indexer.feed.FeedConnector
-import no.nav.arbeidsplassen.internalad.indexer.feed.FeedTaskService
 import no.nav.arbeidsplassen.internalad.indexer.process.PipelineFactory
 import no.nav.arbeidsplassen.internalad.indexer.process.PipelineItem
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest
@@ -21,7 +18,6 @@ import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.index.query.MatchAllQueryBuilder
 import org.elasticsearch.index.query.RangeQueryBuilder
 import org.elasticsearch.index.reindex.DeleteByQueryRequest
-import org.elasticsearch.rest.RestStatus
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.sort.SortBuilders
 import org.elasticsearch.search.sort.SortOrder

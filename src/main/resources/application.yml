@@ -40,9 +40,9 @@ adlistener:
   topic: StillingIntern
 indexer:
   reindex-mode:
-    enabled: true
-    indexname: "internalad_202005"
-    timestamp-from-index: true
+    enabled: false
+    indexname: "internalad_reindex-1"
+    timestamp-from-index: false
   scheduler:
     delete:
       enabled: true

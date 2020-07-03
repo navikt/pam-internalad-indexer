@@ -4,15 +4,12 @@ import com.fasterxml.jackson.databind.JsonNode
 import io.micronaut.configuration.kafka.ConsumerRegistry
 import io.micronaut.http.annotation.*
 import net.javacrumbs.shedlock.core.LockConfiguration
-import no.nav.arbeidsplassen.internalad.indexer.feed.ElasticsearchFeedRepository
-import no.nav.arbeidsplassen.internalad.indexer.feed.FeedTask
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.time.LocalDateTime
 
 @Controller("/internal")
 class IndexerController(private val indexerService: IndexerService,
-                        private val feedTaskRepository: ElasticsearchFeedRepository,
                         private val lockProvider: ElasticsearchLockProvider,
                         private val consumerRegistry: ConsumerRegistry) {
 
@@ -28,18 +25,6 @@ class IndexerController(private val indexerService: IndexerService,
     @Put("/aliases")
     fun updateAliases(@QueryValue indexName: String): Boolean {
         return indexerService.updateAlias(indexName)
-    }
-
-    @Get("/feedtasks")
-    fun resetLastRunDate(): List<FeedTask> {
-        return feedTaskRepository.findAllFeedTask()
-    }
-
-    @Put("/feedtasks")
-    fun setFeedTaskLastRunDate(@QueryValue name: String,
-                               @QueryValue lastRun: String): FeedTask? {
-        val lastRunDate = LocalDateTime.parse(lastRun)
-        return feedTaskRepository.save(FeedTask(name, lastRunDate))
     }
 
     @Get("/schedulerlocks")

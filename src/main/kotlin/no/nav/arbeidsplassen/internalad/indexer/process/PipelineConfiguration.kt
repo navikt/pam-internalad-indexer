@@ -3,7 +3,7 @@ package no.nav.arbeidsplassen.internalad.indexer.process
 import com.fasterxml.jackson.core.JsonPointer
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.micronaut.context.annotation.Factory
-import no.nav.arbeidsplassen.internalad.indexer.feed.AdTransport
+import no.nav.arbeidsplassen.internalad.indexer.index.AdTransport
 import no.nav.pam.yrkeskategorimapper.StyrkCodeConverter
 
 import java.util.function.Consumer

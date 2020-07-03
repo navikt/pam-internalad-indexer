@@ -1,4 +1,4 @@
-package no.nav.arbeidsplassen.internalad.indexer.feed
+package no.nav.arbeidsplassen.internalad.indexer.index
 
 import java.time.LocalDateTime
 
