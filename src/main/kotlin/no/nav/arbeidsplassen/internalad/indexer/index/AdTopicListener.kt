@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.time.ZoneId
 
-@KafkaListener(groupId = "\${adlistener.group-id:internalAd}", threads = 1, offsetReset = OffsetReset.EARLIEST,
+@KafkaListener(groupId = "\${adlistener.group-id:internalad-indexer}", threads = 1, offsetReset = OffsetReset.EARLIEST,
         batch = true, offsetStrategy = OffsetStrategy.SYNC)
 @Requires(property = "indexer.enabled", value = "true")
 class AdTopicListener(private val indexerService: AdIndexer,

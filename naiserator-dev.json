@@ -1,4 +1,4 @@
 {
-  "ingress": "https://pam-internalad-indexer.nais.oera-q.local",
-  "serviceuser-credentials": "serviceuser/data/dev/srvpaminternadindex"
+  "ingress": ["https://pam-internalad-indexer.dev-gcp.nais.io"],
+  "elasticsearch_url": "http://stilling-opendistro-elasticsearch:9200"
 }

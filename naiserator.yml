@@ -26,13 +26,22 @@ spec:
       cpu: 200m
       memory: 256Mi
   vault:
-    enabled: true
-    paths:
-      - kvPath: {{ serviceuser-credentials }}
-        mountPath: /secrets/paminternaladindexer/serviceuser/credentials
+    enabled: false
   webproxy: false
   prometheus:
     enabled: true
     path: /prometheus
   ingresses:
-    - {{ ingress }}
+  {{#each ingress as |url|}}
+     - {{url}}
+  {{/each}}
+  filesFrom:
+    - secret: pam-internalad-indexer
+      mountPath: /var/run/secrets/nais.io/vault
+  env:
+    - name: ELASTICSEARCH_URL
+      value: {{ elasticsearch_url }}
+  accessPolicy:
+    outbound:
+      rules:
+        - application: stilling-opendistro-elasticsearch
