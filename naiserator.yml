@@ -36,7 +36,7 @@ spec:
      - {{url}}
   {{/each}}
   filesFrom:
-    - secret: pam-internalad-indexer
+    - secret: pam-internalad-indexer-env-secret
       mountPath: /var/run/secrets/nais.io/vault
   env:
     - name: ELASTICSEARCH_URL
