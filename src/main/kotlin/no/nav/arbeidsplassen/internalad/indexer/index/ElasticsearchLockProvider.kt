@@ -35,7 +35,7 @@ class ElasticsearchLockProvider(val highLevelClient: RestHighLevelClient,
                                 val objectMapper: ObjectMapper) : LockProvider {
 
     companion object {
-        const val SHEDLOCK_DEFAULT_INDEX = "shedlock"
+        const val SHEDLOCK_DEFAULT_INDEX = "$INTERNALAD-shedlock"
         const val LOCK_UNTIL = "lockUntil"
         const val LOCKED_AT = "lockedAt"
         const val LOCKED_BY = "lockedBy"
