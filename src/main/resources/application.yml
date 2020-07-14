@@ -40,7 +40,7 @@ adlistener:
   topic: StillingIntern
 indexer:
   reindex-mode:
-    enabled: true
+    enabled: false
     indexname: "internalad_202005"
     timestamp-from-index: true
   scheduler:

@@ -8,7 +8,7 @@ import io.micronaut.http.annotation.Get
 import org.slf4j.LoggerFactory
 
 @Controller("/internal")
-class StatusController(private val consumerRegistry: ConsumerRegistry) {
+class StatusController(private val kafkaStateRegistry: KafkaStateRegistry) {
 
     companion object {
         private val LOG = LoggerFactory.getLogger(StatusController::class.java)
@@ -21,14 +21,11 @@ class StatusController(private val consumerRegistry: ConsumerRegistry) {
 
     @Get("/isAlive")
     fun isAlive(): HttpResponse<String> {
-        consumerRegistry.consumerIds.forEach {
-            if ( consumerRegistry.isPaused(it)) {
-                LOG.error("Kafka is not responding for consumer $it")
-                return HttpResponse.serverError("Kafka is not responding for consumer $it")
-            }
+        if (kafkaStateRegistry.isError()) {
+            LOG.error("A Kafka consumer is set to Error")
+            return HttpResponse.serverError("Kafka consumer is not running")
         }
         return HttpResponse.ok("Alive")
-
     }
 
 }
