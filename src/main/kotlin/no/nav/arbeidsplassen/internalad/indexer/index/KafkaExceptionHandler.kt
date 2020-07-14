@@ -13,13 +13,12 @@ import javax.inject.Singleton
 
 @Singleton
 @Replaces(bean = DefaultKafkaListenerExceptionHandler::class)
-class KafkaExceptionHandler : KafkaListenerExceptionHandler {
+class KafkaExceptionHandler(private val kafkaRegistry: KafkaStateRegistry) : KafkaListenerExceptionHandler {
 
     override fun handle(exception: KafkaListenerException) {
         val cause = exception.cause!!
         val consumerBean = exception.kafkaListener
         val kafkaConsumer = exception.kafkaConsumer
-
         if (cause is SerializationException) {
             LOG.error("Kafka consumer [" + consumerBean + "] failed to deserialize value: " + cause.message, cause)
             seekPastDeserializationError(cause, consumerBean, kafkaConsumer)
@@ -32,6 +31,7 @@ class KafkaExceptionHandler : KafkaListenerExceptionHandler {
             }
             LOG.error("Pausing consumer, need further investigation.")
             kafkaConsumer.pause(kafkaConsumer.assignment())
+            kafkaRegistry.setConsumerToError(consumerBean.javaClass.simpleName)
         }
     }
 
@@ -57,4 +57,5 @@ class KafkaExceptionHandler : KafkaListenerExceptionHandler {
         private val LOG = LoggerFactory.getLogger(KafkaExceptionHandler::class.java)
         private val SERIALIZATION_EXCEPTION_MESSAGE_PATTERN = Pattern.compile(".+ for partition (.+)-(\\d+) at offset (\\d+)\\..+")
     }
+
 }
