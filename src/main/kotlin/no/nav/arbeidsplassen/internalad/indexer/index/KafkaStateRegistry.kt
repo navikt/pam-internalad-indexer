@@ -8,22 +8,20 @@ class KafkaStateRegistry {
     private val stateRegistry = hashMapOf<String, KafkaState>()
 
     fun setConsumerToError(consumer:String) {
-        stateRegistry[consumer] = KafkaState(consumer, State.ERROR)
+        stateRegistry[consumer] = KafkaState.ERROR
     }
 
     fun setConsumerToPaused(consumer: String) {
-        stateRegistry[consumer] = KafkaState(consumer, State.PAUSED)
+        stateRegistry[consumer] = KafkaState.PAUSED
     }
 
     fun isError(): Boolean {
-       return (stateRegistry.isNotEmpty() && stateRegistry.values.isNotEmpty())
+       return (stateRegistry.isNotEmpty() && stateRegistry.values.contains(KafkaState.ERROR))
     }
 
 }
 
-data class KafkaState(val consumer: String, val state: State)
-
-enum class State {
+enum class KafkaState {
     RUNNING, PAUSED, ERROR
 }
 
