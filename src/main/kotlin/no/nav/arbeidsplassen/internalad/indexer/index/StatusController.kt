@@ -1,7 +1,5 @@
 package no.nav.arbeidsplassen.internalad.indexer.index
 
-import io.micronaut.configuration.kafka.ConsumerRegistry
-import io.micronaut.context.annotation.Value
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
@@ -21,7 +19,7 @@ class StatusController(private val kafkaStateRegistry: KafkaStateRegistry) {
 
     @Get("/isAlive")
     fun isAlive(): HttpResponse<String> {
-        if (kafkaStateRegistry.isError()) {
+        if (kafkaStateRegistry.hasError()) {
             LOG.error("A Kafka consumer is set to Error")
             return HttpResponse.serverError("Kafka consumer is not running")
         }

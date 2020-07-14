@@ -15,7 +15,7 @@ class KafkaStateRegistry {
         stateRegistry[consumer] = KafkaState.PAUSED
     }
 
-    fun isError(): Boolean {
+    fun hasError(): Boolean {
        return (stateRegistry.isNotEmpty() && stateRegistry.values.contains(KafkaState.ERROR))
     }
 
