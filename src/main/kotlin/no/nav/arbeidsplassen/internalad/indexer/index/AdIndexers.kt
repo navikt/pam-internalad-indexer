@@ -1,9 +1,7 @@
 package no.nav.arbeidsplassen.internalad.indexer.index
 
-import no.nav.arbeidsplassen.internalad.indexer.feed.AdTransport
 import org.elasticsearch.rest.RestStatus
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 data class IndexResponse(val hasFailures: Boolean,
                          val status: RestStatus,

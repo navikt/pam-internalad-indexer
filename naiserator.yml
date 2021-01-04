@@ -2,7 +2,7 @@ apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: pam-internalad-indexer
-  namespace: default
+  namespace: teampam
   labels:
     team: teampam
 spec:
@@ -26,13 +26,26 @@ spec:
       cpu: 200m
       memory: 256Mi
   vault:
-    enabled: true
-    paths:
-      - kvPath: {{ serviceuser-credentials }}
-        mountPath: /secrets/paminternaladindexer/serviceuser/credentials
+    enabled: false
   webproxy: false
   prometheus:
     enabled: true
     path: /prometheus
   ingresses:
-    - {{ ingress }}
+  {{#each ingress as |url|}}
+     - {{url}}
+  {{/each}}
+  filesFrom:
+    - secret: pam-internalad-indexer-env-secret
+      mountPath: /var/run/secrets/nais.io/vault
+  env:
+    - name: ELASTICSEARCH_URL
+      value: {{ elasticsearch_url }}
+    - name: KAFKA_BOOTSTRAP_SERVERS
+      value: {{ kafka_bootstrap_servers }}
+    - name: ADLISTENER_GROUP_ID
+      value: internalad-indexer-gcp
+  accessPolicy:
+    outbound:
+      rules:
+        - application: stilling-opendistro-elasticsearch

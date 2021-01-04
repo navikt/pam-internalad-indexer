@@ -36,13 +36,12 @@ kafka:
   bootstrap:
     servers: ${KAFKA_BOOTSTRAP_SERVERS:`localhost:9092`}
 adlistener:
-  group-id: internalAd
   topic: StillingIntern
 indexer:
   reindex-mode:
     enabled: false
-    indexname: "internalad_202005"
-    timestamp-from-index: true
+    indexname: "internalad_reindex-1"
+    timestamp-from-index: false
   scheduler:
     delete:
       enabled: true

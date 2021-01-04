@@ -8,8 +8,6 @@ import net.javacrumbs.shedlock.core.LockProvider
 import net.javacrumbs.shedlock.core.SimpleLock
 import net.javacrumbs.shedlock.support.LockException
 import net.javacrumbs.shedlock.support.Utils.getHostname
-import no.nav.arbeidsplassen.internalad.indexer.feed.ElasticsearchFeedRepository
-import no.nav.arbeidsplassen.internalad.indexer.feed.FeedTask
 import org.elasticsearch.ElasticsearchException
 import org.elasticsearch.action.DocWriteResponse
 import org.elasticsearch.action.search.SearchRequest
@@ -37,7 +35,7 @@ class ElasticsearchLockProvider(val highLevelClient: RestHighLevelClient,
                                 val objectMapper: ObjectMapper) : LockProvider {
 
     companion object {
-        const val SHEDLOCK_DEFAULT_INDEX = "shedlock"
+        const val SHEDLOCK_DEFAULT_INDEX = "$INTERNALAD-shedlock"
         const val LOCK_UNTIL = "lockUntil"
         const val LOCKED_AT = "lockedAt"
         const val LOCKED_BY = "lockedBy"

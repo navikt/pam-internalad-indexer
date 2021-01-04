@@ -1,4 +1,4 @@
-package no.nav.arbeidsplassen.internalad.indexer.feed
+package no.nav.arbeidsplassen.internalad.indexer.index
 
 import io.micronaut.context.annotation.Factory
 import io.micronaut.context.annotation.Value
@@ -19,10 +19,6 @@ class ElasticsearchFactory(@Value("\${elasticsearch.url:`http://localhost:9200`}
                            @Value("\${elasticsearch.user:foo}") val user: String,
                            @Value("\${elasticsearch.password:bar}") val password: String) {
 
-    @Singleton
-    fun feedTaskService(elasticsearchFeedRepository: ElasticsearchFeedRepository): FeedTaskService {
-        return FeedTaskService(elasticsearchFeedRepository);
-    }
 
     @Singleton
     fun restHigLevelClient(): RestHighLevelClient {

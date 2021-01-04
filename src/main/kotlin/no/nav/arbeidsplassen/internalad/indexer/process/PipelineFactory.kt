@@ -2,7 +2,7 @@ package no.nav.arbeidsplassen.internalad.indexer.process
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
-import no.nav.arbeidsplassen.internalad.indexer.feed.AdTransport
+import no.nav.arbeidsplassen.internalad.indexer.index.AdTransport
 import java.util.function.Consumer
 import java.util.function.Predicate
 import java.util.stream.Stream
@@ -25,5 +25,5 @@ class PipelineFactory(val filterChain: Predicate<AdTransport>,
 }
 
 data class PipelineItem(val dto: AdTransport,
-                           val document: ObjectNode,
-                           var flagDelete: Boolean = false)
+                        val document: ObjectNode,
+                        var flagDelete: Boolean = false)

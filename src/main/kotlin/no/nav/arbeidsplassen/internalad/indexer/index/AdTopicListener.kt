@@ -8,7 +8,6 @@ import io.micronaut.configuration.kafka.annotation.Topic
 import io.micronaut.context.annotation.Requires
 import io.micronaut.context.annotation.Value
 import io.micronaut.core.convert.format.Format
-import no.nav.arbeidsplassen.internalad.indexer.feed.AdTransport
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener
 import org.apache.kafka.common.TopicPartition
@@ -17,7 +16,7 @@ import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.time.ZoneId
 
-@KafkaListener(groupId = "\${adlistener.group-id:internalAd}", threads = 1, offsetReset = OffsetReset.EARLIEST,
+@KafkaListener(groupId = "\${adlistener.group-id:internalad-indexer}", threads = 1, offsetReset = OffsetReset.EARLIEST,
         batch = true, offsetStrategy = OffsetStrategy.SYNC)
 @Requires(property = "indexer.enabled", value = "true")
 class AdTopicListener(private val indexerService: AdIndexer,
