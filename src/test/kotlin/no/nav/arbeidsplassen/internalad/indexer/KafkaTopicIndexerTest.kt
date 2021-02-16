@@ -14,10 +14,7 @@ import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringSerializer
 import org.elasticsearch.rest.RestStatus
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.testcontainers.containers.KafkaContainer
@@ -28,6 +25,7 @@ import javax.inject.Singleton
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @MicronautTest
+@Disabled
 class KafkaTopicIndexerTest : TestPropertyProvider {
 
     lateinit var kafkaProducer: Producer<String, String>
