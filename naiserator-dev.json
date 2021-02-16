@@ -1,5 +1,5 @@
 {
-  "ingress": ["https://pam-internalad-indexer.dev-gcp.nais.io"],
-  "elasticsearch_url": "http://stilling-opendistro-elasticsearch:9200",
-  "kafka_bootstrap_servers":"b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443"
+  "elasticsearch_url": "http://stillinger-opendistro-elasticsearch:9200",
+  "kafka_bootstrap_servers":"b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443",
+  "adlistener_group_id": "internalad-indexer-stillinger"
 }
