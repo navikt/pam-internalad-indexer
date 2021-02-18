@@ -38,17 +38,17 @@ dependencies {
     kapt "io.micronaut:micronaut-validation"
     kaptTest platform("io.micronaut:micronaut-bom:$micronautVersion")
     kaptTest "io.micronaut:micronaut-inject-java"
-    runtimeOnly "com.fasterxml.jackson.module:jackson-module-kotlin:2.10.3"
-    runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
-    runtimeOnly "net.logstash.logback:logstash-logback-encoder:6.2"
+    implementation "ch.qos.logback:logback-classic:$logbackVersion"
+    implementation "net.logstash.logback:logstash-logback-encoder:$logbackEncoderVersion"
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion"
     testImplementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     testImplementation "io.micronaut.test:micronaut-test-junit5:1.1.2"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:5.1.0"
-    testCompile "org.testcontainers:kafka:1.13.0"
+    testCompile "org.testcontainers:kafka:1.15.2"
     implementation "org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticsearchVersion"
     implementation "net.javacrumbs.shedlock:shedlock-micronaut:$shedlockVersion"
-    implementation "io.micronaut.configuration:micronaut-micrometer-core:1.3.0"
-    implementation "io.micronaut.configuration:micronaut-micrometer-registry-prometheus:1.3.0"
+    implementation "io.micronaut.micrometer:micronaut-micrometer-core:$micronautVersion"
+    implementation "io.micronaut.micrometer:micronaut-micrometer-registry-prometheus:$micronautVersion"
     implementation "io.micronaut:micronaut-management:$micronautVersion"
     kapt platform("io.micronaut:micronaut-bom:$micronautVersion")
     implementation "no.nav.arbeid.pam:pam-styrk-yrkeskategori-mapper:$pamStyrkKategoriMapperVersion"

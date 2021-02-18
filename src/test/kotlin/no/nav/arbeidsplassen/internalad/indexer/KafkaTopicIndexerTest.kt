@@ -25,7 +25,6 @@ import javax.inject.Singleton
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @MicronautTest
-@Disabled
 class KafkaTopicIndexerTest : TestPropertyProvider {
 
     lateinit var kafkaProducer: Producer<String, String>

@@ -31,7 +31,7 @@ import javax.inject.Singleton
 class IndexerService(
                      val client: RestHighLevelClient,
                      val objectMapper: ObjectMapper,
-                     @Value("\${indexer.ads.from:24}") val months: Long,
+                     @Value("\${indexer.ads.from:36}") val months: Long,
                      val adPipelineFactory: PipelineFactory): AdIndexer {
 
     companion object {
