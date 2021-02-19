@@ -32,7 +32,8 @@ class IndexerService(
                      val client: RestHighLevelClient,
                      val objectMapper: ObjectMapper,
                      @Value("\${indexer.ads.from:36}") val months: Long,
-                     val adPipelineFactory: PipelineFactory): AdIndexer {
+                     val adPipelineFactory: PipelineFactory,
+                     @Value("\${indexer.indexName}") val indexName: String): AdIndexer {
 
     companion object {
         private val LOG = LoggerFactory.getLogger(IndexerService::class.java)
@@ -43,13 +44,16 @@ class IndexerService(
     }
 
     init {
-        val defaultIndexRequest = GetIndexRequest(INTERNALAD)
-        if (!client.indices().exists(defaultIndexRequest, RequestOptions.DEFAULT)) {
-            val indexName = internalAdIndexWithTimestamp()
-            createIndex(indexName)
+        // create index if not exist
+        val indexRequest = GetIndexRequest(indexName)
+        if (!client.indices().exists(indexRequest, RequestOptions.DEFAULT)) {
+            createIndex(indexName);
+        }
+        val aliasIndexRequest = GetIndexRequest(INTERNALAD)
+        if (!client.indices().exists(aliasIndexRequest, RequestOptions.DEFAULT)) {
             updateAlias(indexName)
         }
-
+        LOG.info("Will index to indexName $indexName")
     }
 
     override fun createIndex(indexName: String): Boolean {
@@ -90,18 +94,9 @@ class IndexerService(
                 bulkResponse.buildFailureMessage())
     }
 
-    override fun index(ads: List<AdTransport>, indexName: String): IndexResponse {
-        val bulkResponse = bulkIndex(ads, indexName)
-        return IndexResponse(bulkResponse.hasFailures(),
-                bulkResponse.status(),
-                bulkResponse.items.size,
-                bulkResponse.buildFailureMessage())
-    }
-
-    private fun bulkIndex(ads: List<AdTransport>, indexName: String = INTERNALAD): BulkResponse {
+    private fun bulkIndex(ads: List<AdTransport>): BulkResponse {
         val adStream = adPipelineFactory.toPipelineStream(ads)
-        val bulkResponse = indexBulk(adStream, indexName)
-        return bulkResponse
+        return  indexBulk(adStream, indexName)
     }
 
     private fun indexBulk(ads: Stream<PipelineItem>, indexName: String): BulkResponse {

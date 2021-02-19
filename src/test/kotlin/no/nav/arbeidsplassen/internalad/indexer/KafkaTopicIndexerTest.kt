@@ -3,7 +3,7 @@ package no.nav.arbeidsplassen.internalad.indexer
 import io.micronaut.context.annotation.Primary
 import io.micronaut.context.annotation.Property
 import io.micronaut.context.annotation.Replaces
-import io.micronaut.test.annotation.MicronautTest
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import io.micronaut.test.support.TestPropertyProvider
 import no.nav.arbeidsplassen.internalad.indexer.index.AdTransport
 import no.nav.arbeidsplassen.internalad.indexer.index.AdIndexer
@@ -75,9 +75,6 @@ class KafkaTopicIndexerTest : TestPropertyProvider {
 class MyIndexerService: AdIndexer {
     override fun index(ads: List<AdTransport>): IndexResponse {
         adIndexerLatch.countDown()
-        return IndexResponse(hasFailures = false, status = RestStatus.OK, numItems = 1, failureMessage = "")
-    }
-    override fun index(ads: List<AdTransport>, indexName: String): IndexResponse {
         return IndexResponse(hasFailures = false, status = RestStatus.OK, numItems = 1, failureMessage = "")
     }
 

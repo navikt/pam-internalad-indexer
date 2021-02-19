@@ -19,10 +19,7 @@ import java.time.ZoneId
 @KafkaListener(groupId = "\${adlistener.group-id:internalad-indexer}", threads = 1, offsetReset = OffsetReset.EARLIEST,
         batch = true, offsetStrategy = OffsetStrategy.SYNC)
 @Requires(property = "indexer.enabled", value = "true")
-class AdTopicListener(private val indexerService: AdIndexer,
-                      @Value("\${indexer.offset-timestamp}")
-                      @Format("yyyy-MM-dd'T'HH:mm:ss'Z'") private var offsetTimeStamp: LocalDateTime?,
-                      @Value("\${indexer.timestamp-from-index:false}") private val timestampfromindex: Boolean): ConsumerRebalanceListener, ConsumerAware<Any, Any> {
+class AdTopicListener(private val indexerService: AdIndexer): ConsumerRebalanceListener, ConsumerAware<Any, Any> {
 
     private lateinit var consumer: Consumer<Any,Any>
 
@@ -31,12 +28,6 @@ class AdTopicListener(private val indexerService: AdIndexer,
     }
 
     init {
-        if (timestampfromindex) {
-            runCatching {
-                LOG.info("Using timestamp from lastupdated time from index to set offset")
-                offsetTimeStamp = indexerService.fetchLastUpdatedTimeForIndex(INTERNALAD)
-            }.onFailure { LOG.warn("could not get last timestamp, maybe empty index.") }
-        }
     }
 
     @Topic("\${adlistener.topic:StillingIntern}")
@@ -56,16 +47,11 @@ class AdTopicListener(private val indexerService: AdIndexer,
      }
 
     override fun onPartitionsAssigned(partitions: MutableCollection<TopicPartition>) {
-        if (offsetTimeStamp!=null) {
-            LOG.info("Resetting offset for timestamp {}", offsetTimeStamp)
-            val topicPartitionTimestamp = partitions.map { it to offsetTimeStamp?.toMillis() }.toMap()
-            val partitionOffsetMap = consumer.offsetsForTimes(topicPartitionTimestamp)
-            partitionOffsetMap.forEach { (topic, timestamp) -> consumer.seek(topic, timestamp.offset()) }
-        }
+        LOG.info("onPartitionsAssigned is not implemented")
     }
 
     override fun onPartitionsRevoked(partitions: MutableCollection<TopicPartition>?) {
-        LOG.info("onPartionsRevoked is called")
+        LOG.info("onPartionsRevoked is not implemented")
     }
 
     override fun setKafkaConsumer(consumer: Consumer<Any, Any>) {
