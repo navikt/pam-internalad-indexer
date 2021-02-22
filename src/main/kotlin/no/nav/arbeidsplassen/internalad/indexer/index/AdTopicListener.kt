@@ -31,14 +31,14 @@ class AdTopicListener(private val indexerService: AdIndexer): ConsumerRebalanceL
     }
 
     @Topic("\${adlistener.topic:StillingIntern}")
-    fun receive(ads: List<AdTransport>, offsets: List<Long>, partition: Int) {
+    fun receive(ads: List<AdTransport>, offsets: List<Long>, partitions: List<Int>) {
         LOG.info("Received batch with {} ads", ads.size)
         if (ads.isNotEmpty()) {
             val indexResponse = indexerService.index(ads)
             val last = ads.last()
             if (indexResponse.status == RestStatus.OK && !indexResponse.hasFailures) {
                 LOG.info("indexed ${indexResponse.numItems}")
-                LOG.info("committing latest offset ${offsets.last()} partition ${partition} with ad ${last.uuid} and last updated was ${last.updated}")
+                LOG.info("committing latest offset ${offsets.last()} partition ${partitions.last()} with ad ${last.uuid} and last updated was ${last.updated}")
             } else {
                 throw Exception("Index response has failures, elasticsearch might be down")
             }
