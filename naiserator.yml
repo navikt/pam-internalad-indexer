@@ -41,6 +41,10 @@ spec:
       value: {{ kafka_bootstrap_servers }}
     - name: ADLISTENER_GROUP_ID
       value: {{ adlistener_group_id }}
+    - name: INDEXER_ENABLED
+      value: "{{ indexer_enabled }}"
+    - name: INDEXER_INDEXNAME
+      value: "{{ indexer_indexname }}"
   accessPolicy:
     outbound:
       rules:

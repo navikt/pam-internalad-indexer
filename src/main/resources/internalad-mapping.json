@@ -321,7 +321,7 @@
           "type": "keyword"
         },
         "properties.nace2.name":{
-          "type": "text"
+          "type": "keyword"
         }
       }
     },
