@@ -30,11 +30,6 @@ feed:
 shedlock:
   defaults:
     lock-at-most-for: 5m
-kafka:
-  health:
-    enabled: false
-  bootstrap:
-    servers: ${KAFKA_BOOTSTRAP_SERVERS:`localhost:9092`}
 adlistener:
   topic: StillingIntern
 indexer:
