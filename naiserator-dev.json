@@ -1,7 +1,7 @@
 {
   "elasticsearch_url": "http://stillinger-opendistro-elasticsearch:9200",
   "kafka_bootstrap_servers":"b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443",
-  "adlistener_group_id": "internalad-indexer-stillinger",
+  "adlistener_group_id": "internalad-indexer-stilling",
   "indexer_enabled": "true",
-  "indexer_indexname": "internalad_20210211_142213"
+  "indexer_indexname": "internalad_20210222"
 }
