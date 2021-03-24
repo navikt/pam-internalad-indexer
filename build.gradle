@@ -47,8 +47,8 @@ dependencies {
     testImplementation "org.testcontainers:kafka:1.15.2"
     implementation "org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticsearchVersion"
     implementation "net.javacrumbs.shedlock:shedlock-micronaut:$shedlockVersion"
-    implementation "io.micronaut.micrometer:micronaut-micrometer-core:$micronautVersion"
-    implementation "io.micronaut.micrometer:micronaut-micrometer-registry-prometheus:$micronautVersion"
+    implementation "io.micronaut.micrometer:micronaut-micrometer-core:$micronautMicrometerVersion"
+    implementation "io.micronaut.micrometer:micronaut-micrometer-registry-prometheus:$micronautMicrometerVersion"
     implementation "io.micronaut:micronaut-management:$micronautVersion"
     kapt platform("io.micronaut:micronaut-bom:$micronautVersion")
     implementation "no.nav.arbeid.pam:pam-styrk-yrkeskategori-mapper:$pamStyrkKategoriMapperVersion"
