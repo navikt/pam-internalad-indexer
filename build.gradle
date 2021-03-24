@@ -44,7 +44,7 @@ dependencies {
     testImplementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     testImplementation "io.micronaut.test:micronaut-test-junit5:1.1.2"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:5.1.0"
-    testCompile "org.testcontainers:kafka:1.15.2"
+    testImplementation "org.testcontainers:kafka:1.15.2"
     implementation "org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticsearchVersion"
     implementation "net.javacrumbs.shedlock:shedlock-micronaut:$shedlockVersion"
     implementation "io.micronaut.micrometer:micronaut-micrometer-core:$micronautVersion"

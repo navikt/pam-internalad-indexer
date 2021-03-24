@@ -5,8 +5,8 @@ import io.micronaut.context.annotation.Property
 import io.micronaut.context.annotation.Replaces
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import io.micronaut.test.support.TestPropertyProvider
-import no.nav.arbeidsplassen.internalad.indexer.index.AdTransport
 import no.nav.arbeidsplassen.internalad.indexer.index.AdIndexer
+import no.nav.arbeidsplassen.internalad.indexer.index.AdTransport
 import no.nav.arbeidsplassen.internalad.indexer.index.IndexResponse
 import no.nav.arbeidsplassen.internalad.indexer.index.IndexerService
 import org.apache.kafka.clients.producer.KafkaProducer
@@ -14,10 +14,14 @@ import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringSerializer
 import org.elasticsearch.rest.RestStatus
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.testcontainers.containers.KafkaContainer
+import org.testcontainers.utility.DockerImageName
 import java.time.LocalDateTime
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -31,7 +35,7 @@ class KafkaTopicIndexerTest : TestPropertyProvider {
 
     companion object {
         private val LOG: Logger = LoggerFactory.getLogger(KafkaTopicIndexerTest::class.java)
-        private val kafkaContainer: KafkaContainer = KafkaContainer()
+        private val kafkaContainer: KafkaContainer = KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka").withTag("5.4.3"))
     }
 
 
