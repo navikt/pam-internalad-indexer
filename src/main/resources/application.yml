@@ -1,6 +1,8 @@
 micronaut:
   application:
     name: internalad-indexer
+  server:
+    thread-selection: auto
   http:
     client:
       read-timeout: 300s

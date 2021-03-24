@@ -1,8 +1,8 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.3.70"
-    id "org.jetbrains.kotlin.kapt" version "1.3.70"
-    id "org.jetbrains.kotlin.plugin.allopen" version "1.3.70"
-    id "com.github.johnrengelman.shadow" version "5.0.0"
+    id "org.jetbrains.kotlin.jvm" version "$kotlinVersion"
+    id "org.jetbrains.kotlin.kapt" version "$kotlinVersion"
+    id "org.jetbrains.kotlin.plugin.allopen" version "$kotlinVersion"
+    id "com.github.johnrengelman.shadow" version "$shadowVersion"
     id "application"
 }
 
@@ -44,11 +44,11 @@ dependencies {
     testImplementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     testImplementation "io.micronaut.test:micronaut-test-junit5:1.1.2"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:5.1.0"
-    testCompile "org.testcontainers:kafka:1.15.2"
+    testImplementation "org.testcontainers:kafka:1.15.2"
     implementation "org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticsearchVersion"
     implementation "net.javacrumbs.shedlock:shedlock-micronaut:$shedlockVersion"
-    implementation "io.micronaut.micrometer:micronaut-micrometer-core:$micronautVersion"
-    implementation "io.micronaut.micrometer:micronaut-micrometer-registry-prometheus:$micronautVersion"
+    implementation "io.micronaut.micrometer:micronaut-micrometer-core:$micronautMicrometerVersion"
+    implementation "io.micronaut.micrometer:micronaut-micrometer-registry-prometheus:$micronautMicrometerVersion"
     implementation "io.micronaut:micronaut-management:$micronautVersion"
     kapt platform("io.micronaut:micronaut-bom:$micronautVersion")
     implementation "no.nav.arbeid.pam:pam-styrk-yrkeskategori-mapper:$pamStyrkKategoriMapperVersion"
@@ -69,7 +69,7 @@ allOpen {
 
 compileKotlin {
 	kotlinOptions {
-	    jvmTarget = '11'
+	    jvmTarget = '14'
 	    //Will retain parameter names for Java reflection
 	    javaParameters = true
 	}
@@ -77,7 +77,7 @@ compileKotlin {
 
 compileTestKotlin {
 	kotlinOptions {
-	    jvmTarget = '11'
+	    jvmTarget = '14'
 	    javaParameters = true
 	}
 }
