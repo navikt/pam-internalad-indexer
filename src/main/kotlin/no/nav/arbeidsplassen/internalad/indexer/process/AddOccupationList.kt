@@ -2,7 +2,6 @@ package no.nav.arbeidsplassen.internalad.indexer.process
 
 import no.nav.pam.yrkeskategorimapper.StyrkCodeConverter
 import java.util.function.Consumer
-import javax.inject.Singleton
 
 class AddOccupationList(val converter: StyrkCodeConverter): Consumer<PipelineItem> {
 
