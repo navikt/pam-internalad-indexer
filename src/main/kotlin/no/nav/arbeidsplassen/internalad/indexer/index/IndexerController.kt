@@ -49,7 +49,7 @@ class IndexerController(private val indexerService: IndexerService,
     fun pauseIndexer(): String {
         LOG.info("Pausing indexer")
         consumerRegistry.consumerIds
-                .filter { it.startsWith("internalad-indexer-ad-topic-listener") }
+                .filter { it.startsWith(AD_LISTENER_CLIENT_ID) }
                 .forEach {
                     LOG.info("Pausing consumer $it")
                     consumerRegistry.pause(it)
@@ -61,7 +61,7 @@ class IndexerController(private val indexerService: IndexerService,
     fun resumeIndexer(): String {
         LOG.info("Resuming indexer")
         consumerRegistry.consumerIds
-                .filter { it.startsWith("internalad-indexer-ad-topic-listener") }
+                .filter { it.startsWith(AD_LISTENER_CLIENT_ID) }
                 .forEach {
                     LOG.info("Resuming consumer $it ")
                     consumerRegistry.resume(it)
