@@ -40,6 +40,11 @@ class IndexerController(private val indexerService: IndexerService,
         return lock.isPresent
     }
 
+    @Get("/consumers")
+    fun getConsumerIds(): MutableSet<String> {
+        return consumerRegistry.consumerIds
+    }
+
     @Put("/indexer/pause")
     fun pauseIndexer(): String {
         LOG.info("Pausing indexer")

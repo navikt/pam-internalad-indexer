@@ -33,7 +33,7 @@ class IndexerService(
                      val objectMapper: ObjectMapper,
                      @Value("\${indexer.ads.from:36}") val months: Long,
                      val adPipelineFactory: PipelineFactory,
-                     @Value("\${indexer.indexname}") val indexName: String): AdIndexer {
+                     @Value("\${indexer.indexname:internalad-1}") val indexName: String): AdIndexer {
 
     companion object {
         private val LOG = LoggerFactory.getLogger(IndexerService::class.java)
