@@ -2,6 +2,7 @@ package no.nav.arbeidsplassen.internalad.indexer.index
 
 import com.fasterxml.jackson.databind.JsonNode
 import io.micronaut.configuration.kafka.ConsumerRegistry
+import io.micronaut.core.annotation.Nullable
 import io.micronaut.http.annotation.*
 import net.javacrumbs.shedlock.core.LockConfiguration
 import org.slf4j.LoggerFactory
@@ -18,12 +19,12 @@ class IndexerController(private val indexerService: IndexerService,
     }
 
     @Get("/lastupdated")
-    fun getLastUpdateTimeForIndex(@QueryValue indexName: String = indexerService.indexName): LocalDateTime {
+    fun getLastUpdateTimeForIndex(@Nullable @QueryValue indexName: String = indexerService.indexName): LocalDateTime {
         return indexerService.fetchLastUpdatedTimeForIndex(indexName)
     }
 
     @Put("/aliases")
-    fun updateAliases(@QueryValue indexName: String = indexerService.indexName): Boolean {
+    fun updateAliases(@Nullable @QueryValue indexName: String = indexerService.indexName): Boolean {
         LOG.info("Switching alias to $indexName")
         return indexerService.updateAlias(indexName)
     }
