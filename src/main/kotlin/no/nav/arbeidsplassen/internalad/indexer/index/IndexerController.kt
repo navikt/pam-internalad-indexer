@@ -2,9 +2,9 @@ package no.nav.arbeidsplassen.internalad.indexer.index
 
 import com.fasterxml.jackson.databind.JsonNode
 import io.micronaut.configuration.kafka.ConsumerRegistry
-import io.micronaut.core.annotation.Nullable
 import io.micronaut.http.annotation.*
 import net.javacrumbs.shedlock.core.LockConfiguration
+import org.elasticsearch.cluster.metadata.AliasMetadata
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.time.LocalDateTime
@@ -18,15 +18,21 @@ class IndexerController(private val indexerService: IndexerService,
         private val LOG = LoggerFactory.getLogger(IndexerController::class.java)
     }
 
-    @Get("/lastupdated")
-    fun getLastUpdateTimeForIndex(@Nullable @QueryValue indexName: String = indexerService.indexName): LocalDateTime {
-        return indexerService.fetchLastUpdatedTimeForIndex(indexName)
+    @Get("/lastupdated{?indexName}")
+    fun getLastUpdateTimeForIndex(indexName: String?): LocalDateTime {
+        return if (indexName!=null) indexerService.fetchLastUpdatedTimeForIndex(indexName)
+        else indexerService.fetchLastUpdatedTimeForIndex(indexerService.indexName)
     }
 
-    @Put("/aliases")
-    fun updateAliases(@Nullable @QueryValue indexName: String = indexerService.indexName): Boolean {
-        LOG.info("Switching alias to $indexName")
-        return indexerService.updateAlias(indexName)
+    @Put("/aliases{?indexName}")
+    fun updateAliases(indexName: String?): Boolean {
+        return if (indexName!=null) indexerService.updateAlias(indexName)
+        else  indexerService.updateAlias(indexerService.indexName)
+    }
+
+    @Get("/aliases")
+    fun getAliases(): MutableMap<String, MutableSet<AliasMetadata>>? {
+        return indexerService.getAlias()
     }
 
     @Get("/schedulerlocks")

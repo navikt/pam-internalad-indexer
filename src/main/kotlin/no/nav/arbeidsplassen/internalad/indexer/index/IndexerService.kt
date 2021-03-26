@@ -5,6 +5,7 @@ import io.micronaut.context.annotation.Value
 import no.nav.arbeidsplassen.internalad.indexer.process.PipelineFactory
 import no.nav.arbeidsplassen.internalad.indexer.process.PipelineItem
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest
+import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest
 import org.elasticsearch.action.bulk.BulkRequest
 import org.elasticsearch.action.bulk.BulkResponse
 import org.elasticsearch.action.index.IndexRequest
@@ -14,6 +15,7 @@ import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.client.indices.GetIndexRequest
 import org.elasticsearch.client.indices.PutMappingRequest
+import org.elasticsearch.cluster.metadata.AliasMetadata
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.index.query.MatchAllQueryBuilder
 import org.elasticsearch.index.query.RangeQueryBuilder
@@ -85,6 +87,13 @@ class IndexerService(
         return client.indices().updateAliases(request, RequestOptions.DEFAULT).isAcknowledged
 
     }
+
+
+    fun getAlias(): MutableMap<String, MutableSet<AliasMetadata>>? {
+        val aliasesRequest = GetAliasesRequest(INTERNALAD)
+        return client.indices().getAlias(aliasesRequest, RequestOptions.DEFAULT).aliases
+    }
+
 
     override fun index(ads: List<AdTransport>): IndexResponse {
         val bulkResponse = bulkIndex(ads)
