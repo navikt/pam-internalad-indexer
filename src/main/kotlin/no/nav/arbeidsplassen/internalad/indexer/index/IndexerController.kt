@@ -18,12 +18,13 @@ class IndexerController(private val indexerService: IndexerService,
     }
 
     @Get("/lastupdated")
-    fun getLastUpdateTimeForIndex(@QueryValue indexName: String): LocalDateTime {
+    fun getLastUpdateTimeForIndex(@QueryValue indexName: String = indexerService.indexName): LocalDateTime {
         return indexerService.fetchLastUpdatedTimeForIndex(indexName)
     }
 
     @Put("/aliases")
-    fun updateAliases(@QueryValue indexName: String): Boolean {
+    fun updateAliases(@QueryValue indexName: String = indexerService.indexName): Boolean {
+        LOG.info("Switching alias to $indexName")
         return indexerService.updateAlias(indexName)
     }
 
