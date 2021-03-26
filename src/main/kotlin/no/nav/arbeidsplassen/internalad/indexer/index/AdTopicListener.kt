@@ -11,18 +11,16 @@ import org.apache.kafka.clients.consumer.ConsumerRebalanceListener
 import org.apache.kafka.common.TopicPartition
 import org.elasticsearch.rest.RestStatus
 import org.slf4j.LoggerFactory
-import java.time.LocalDateTime
-import java.time.ZoneId
 
-@KafkaListener(groupId = "\${adlistener.group-id:internalad-indexer}", threads = 1, offsetReset = OffsetReset.EARLIEST,
+@KafkaListener(clientId = AD_LISTENER_CLIENT_ID, groupId = "\${adlistener.group-id:internalad-indexer}", threads = 1, offsetReset = OffsetReset.EARLIEST,
         batch = true, offsetStrategy = OffsetStrategy.SYNC)
 @Requires(property = "indexer.enabled", value = "true")
 class AdTopicListener(private val indexerService: AdIndexer): ConsumerRebalanceListener, ConsumerAware<Any, Any> {
 
     private lateinit var consumer: Consumer<Any,Any>
-
     companion object {
         private val LOG = LoggerFactory.getLogger(AdTopicListener::class.java)
+
     }
 
     init {
@@ -56,6 +54,4 @@ class AdTopicListener(private val indexerService: AdIndexer): ConsumerRebalanceL
     }
 }
 
-fun LocalDateTime.toMillis(): Long {
-    return this.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-}
+const val AD_LISTENER_CLIENT_ID="internalad-indexer-ad-topic-listener"

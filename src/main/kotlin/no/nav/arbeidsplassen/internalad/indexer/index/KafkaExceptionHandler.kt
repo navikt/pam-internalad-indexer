@@ -45,7 +45,7 @@ class KafkaExceptionHandler(private val kafkaRegistry: KafkaStateRegistry) : Kaf
                 val offset = Integer.valueOf(matcher.group(3))
                 val tp = TopicPartition(topic, partition)
                 LOG.warn("Seeking past undeserializable consumer record for partition {}-{} and offset {}", topic, partition, offset)
-                kafkaConsumer.seek(tp, offset + 1.toLong())
+                kafkaConsumer.seek(tp, offset + 1L)
 
             }
         } catch (e: Throwable) {

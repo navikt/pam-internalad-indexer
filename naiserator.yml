@@ -34,13 +34,15 @@ spec:
   filesFrom:
     - secret: pam-internalad-indexer-env-secret
       mountPath: /var/run/secrets/nais.io/vault
+  kafka:
+    pool: {{ kafka_pool }}
   env:
     - name: ELASTICSEARCH_URL
-      value: {{ elasticsearch_url }}
-    - name: KAFKA_BOOTSTRAP_SERVERS
-      value: {{ kafka_bootstrap_servers }}
+      value: "{{ elasticsearch_url }}"
     - name: ADLISTENER_GROUP_ID
-      value: {{ adlistener_group_id }}
+      value: "{{ adlistener_group_id }}"
+    - name: ADLISTENER_TOPIC
+      value: "{{ adlistener_topic }}"
     - name: INDEXER_ENABLED
       value: "{{ indexer_enabled }}"
     - name: INDEXER_INDEXNAME
