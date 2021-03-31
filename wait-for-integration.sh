@@ -9,12 +9,11 @@ run_integration() {
         exec $COMMAND
       fi
       exit 0
-    else
-      echo $result
     fi
     sleep 1
   done
   echo "Integration script timed out" >&2
+  docker-compose logs internalad-indexer
   exit 1
 }
 run_integration

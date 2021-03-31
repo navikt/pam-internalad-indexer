@@ -42,5 +42,3 @@ jobs:
           docker-compose rm -f
           docker-compose up -d --build
           ./wait-for-integration.sh ./gradlew integration
-          docker-compose logs elasticsearch
-          docker-compose logs internalad-indexer
