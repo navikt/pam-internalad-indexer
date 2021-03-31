@@ -29,7 +29,12 @@ class StatusController(private val kafkaStateRegistry: KafkaStateRegistry, priva
                 }
             return HttpResponse.serverError("Kafka consumer is not running")
         }
-        return HttpResponse.ok("Alive")
+        return HttpResponse.ok("OK")
+    }
+
+    @Get("/kafkaState")
+    fun setKafkaState(): Boolean {
+        return kafkaStateRegistry.hasError()
     }
 
 }

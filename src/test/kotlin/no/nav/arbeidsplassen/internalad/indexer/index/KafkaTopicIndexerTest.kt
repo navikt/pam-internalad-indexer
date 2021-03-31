@@ -68,7 +68,7 @@ class KafkaTopicIndexerTest : TestPropertyProvider {
     fun kafkaListenerTest() {
         kafkaProducer.send(ProducerRecord("StillingIntern", "83a08d2c-b0e2-4d5d-88dc-02736b9c6be1", adTransportJSON))
         kafkaProducer.flush()
-        val isIndexed = adIndexerLatch.await(20L, TimeUnit.SECONDS)
+        val isIndexed = adIndexerLatch.await(10L, TimeUnit.SECONDS)
         assert(isIndexed)
     }
 }

@@ -63,6 +63,11 @@ test {
     useJUnitPlatform()
 }
 
+task integration(type: Test) {
+    include "**/*IT.class"
+    useJUnitPlatform()
+}
+
 allOpen {
 	annotation("io.micronaut.aop.Around")
 }

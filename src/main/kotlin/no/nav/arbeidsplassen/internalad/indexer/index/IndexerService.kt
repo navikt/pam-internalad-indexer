@@ -46,7 +46,17 @@ class IndexerService(
     }
 
     init {
-        // create index if not exist
+        try {
+            initIndex()
+        }
+        catch (e:Exception) {
+            LOG.error("Got exception while initializing: ${e.message}, will wait for 10s and try again")
+            Thread.sleep(10000)
+            initIndex()
+        }
+    }
+
+    private fun initIndex() {
         val indexRequest = GetIndexRequest(indexName)
         if (!client.indices().exists(indexRequest, RequestOptions.DEFAULT)) {
             createIndex(indexName);
