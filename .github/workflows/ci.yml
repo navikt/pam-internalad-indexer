@@ -41,7 +41,6 @@ jobs:
           docker-compose stop
           docker-compose rm -f
           docker-compose up -d --build
-          sleep 60
+          ./wait-for-integration.sh ./gradlew integration
           docker-compose logs elasticsearch
           docker-compose logs internalad-indexer
-

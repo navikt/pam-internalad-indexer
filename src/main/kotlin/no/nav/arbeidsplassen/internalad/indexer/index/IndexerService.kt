@@ -50,8 +50,8 @@ class IndexerService(
             initIndex()
         }
         catch (e:Exception) {
-            LOG.error("Got exception while initializing: ${e.message}, will wait for 10s and try again")
-            Thread.sleep(10000)
+            LOG.error("Got exception while initializing: ${e.message}, will wait for 20s and try again")
+            Thread.sleep(20000)
             initIndex()
         }
     }
