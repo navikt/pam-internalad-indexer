@@ -36,7 +36,6 @@ services:
     image: amazon/opendistro-for-elasticsearch:1.12.0
     ports:
       - "9200:9200"
-      - "9600:9600"
     environment:
       - discovery.type=single-node
       - opendistro_security.disabled=true
