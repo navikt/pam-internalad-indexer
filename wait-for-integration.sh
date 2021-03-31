@@ -12,7 +12,7 @@ run_integration() {
     fi
     sleep 1
   done
-  echo "Timed out" >&2
+  echo "Integration script timed out" >&2
   exit 1
 }
 run_integration
