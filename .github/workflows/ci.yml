@@ -41,7 +41,7 @@ jobs:
           docker-compose stop
           docker-compose rm -f
           docker-compose up -d --build
-          sleep 10
+          sleep 60
           docker-compose logs internalad-indexer
           docker-compose logs elasticsearch
 
