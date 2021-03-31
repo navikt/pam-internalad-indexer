@@ -1,5 +1,5 @@
 #!/bin/sh
-TIMEOUT=60
+TIMEOUT=120
 COMMAND=$@
 run_integration() {
   for i in `seq $TIMEOUT` ; do
