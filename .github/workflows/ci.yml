@@ -35,3 +35,10 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: build and test
         run: ./gradlew test build
+      - name: integration tests
+        run: |
+          set -e
+          docker-compose stop
+          docker-compose rm -f
+          docker-compose up -d --build
+          ./wait-for-integration.sh ./gradlew integration
