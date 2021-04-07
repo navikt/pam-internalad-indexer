@@ -24,7 +24,7 @@ class StatusController(private val kafkaStateRegistry: KafkaStateRegistry, priva
             LOG.error("A Kafka consumer is set to Error, setting all consumers to pause")
             consumerRegistry.consumerIds
                 .forEach {
-                    LOG.info("Pausing consumer $it")
+                    LOG.error("Pausing consumer $it")
                     consumerRegistry.pause(it)
                 }
             return HttpResponse.serverError("Kafka consumer is not running")
