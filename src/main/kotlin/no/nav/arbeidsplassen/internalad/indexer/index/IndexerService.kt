@@ -141,9 +141,10 @@ class IndexerService(
     }
 
     fun initAlias(indexName: String) {
-        val aliasIndexRequest = GetIndexRequest(INTERNALAD)
-        if (!client.indices().exists(aliasIndexRequest, RequestOptions.DEFAULT)) {
-            LOG.info("Alias does not exist creating alias pointing to $INTERNALAD")
+        val aliasIndexRequest = GetAliasesRequest(INTERNALAD)
+        val response = client.indices().getAlias(aliasIndexRequest, RequestOptions.DEFAULT)
+        if (response.status() == RestStatus.OK && response.aliases[indexName] == null) {
+            LOG.warn("Alias ${INTERNALAD} is not pointing to $indexName, will try to update alias again")
             updateAlias(indexName)
         }
     }
