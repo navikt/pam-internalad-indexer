@@ -14,8 +14,8 @@ import org.elasticsearch.rest.RestStatus
 import org.slf4j.LoggerFactory
 
 @KafkaListener(
-    clientId = AD_REINDEX_LISTENER_CLIENT_ID,
-    groupId = "\${ad-reindex-listener.group-id:internalad-reindexer}",
+    clientId = AD_LISTENER_CLIENT_ID,
+    groupId = "\${adlistener.reindex.group-id:internalad-reindexer}",
     threads = 1,
     offsetReset = OffsetReset.EARLIEST,
     batch = true,
@@ -76,5 +76,3 @@ class AdReIndexTopicListener(
         this.consumer = consumer
     }
 }
-
-const val AD_REINDEX_LISTENER_CLIENT_ID = "internalad-reindexer-ad-topic-listener"
