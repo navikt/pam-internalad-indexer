@@ -59,7 +59,8 @@
     "employer": "Leka kommune",
     "ontologyJobtitle": "{\"konseptId\":266998,\"label\":\"Pedagogisk leder (barnehage/førskole)\",\"styrk08\":\"2342\"}",
     "classification_input_source": "ontologyJobtitle",
-    "sector": "Offentlig"
+    "sector": "Offentlig",
+    "remote": "Hjemmekontor"
   },
   "title": "Vi søker pedagogisk leder til",
   "status": "ACTIVE",

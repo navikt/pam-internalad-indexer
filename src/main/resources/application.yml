@@ -39,4 +39,5 @@ indexer:
     delete:
       enabled: true
   enabled: true
+  reindex: true
 
