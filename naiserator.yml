@@ -51,6 +51,8 @@ spec:
       value: "{{ indexer_reindex }}"
     - name: ADLISTENER_REINDEX_GROUP_ID
       value: "{{ adlistener_reindex_group_id }}"
+    - name: INDEXER_REINDEX_INDEXNAME
+      value: "{{ indexer_reindex_indexname }}"
   accessPolicy:
     outbound:
       rules:

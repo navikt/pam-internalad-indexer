@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory
 @Requires(property = "indexer.reindex", value = "true")
 class AdReIndexTopicListener(
     private val indexerService: IndexerService,
-    @Value("\${reindexer.indexname:reindex-internalad-1}") val indexName: String
+    @Value("\${indexer.reindex.indexname:reindex-internalad-1}") val indexName: String
 ) : ConsumerRebalanceListener, ConsumerAware<Any, Any> {
 
     private lateinit var consumer: Consumer<Any, Any>
