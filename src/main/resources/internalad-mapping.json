@@ -405,6 +405,25 @@
         },
         "classification_input_source": {
           "type": "keyword"
+        },
+        "remote": {
+          "type": "keyword"
+        }
+      }
+    },
+    "administration": {
+      "properties": {
+        "navIdent": {
+          "type": "keyword"
+        },
+        "remarks": {
+          "type": "keyword"
+        },
+        "reportee": {
+          "type": "text"
+        },
+        "status": {
+          "type": "keyword"
         }
       }
     }

@@ -20,6 +20,7 @@ import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.index.query.MatchAllQueryBuilder
 import org.elasticsearch.index.query.RangeQueryBuilder
 import org.elasticsearch.index.reindex.DeleteByQueryRequest
+import org.elasticsearch.rest.RestStatus
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.sort.SortBuilders
 import org.elasticsearch.search.sort.SortOrder
@@ -33,42 +34,26 @@ import javax.inject.Singleton
 class IndexerService(
                      val client: RestHighLevelClient,
                      val objectMapper: ObjectMapper,
-                     @Value("\${indexer.ads.from:36}") val months: Long,
-                     val adPipelineFactory: PipelineFactory,
-                     @Value("\${indexer.indexname:internalad-1}") val indexName: String): AdIndexer {
+                     val adPipelineFactory: PipelineFactory) {
 
     companion object {
         private val LOG = LoggerFactory.getLogger(IndexerService::class.java)
+        private val months = 36L
         private val INTERNALAD_COMMON_SETTINGS = IndexerService::class.java
                 .getResource("/internalad-common.json").readText()
         private val INTERNALAD_MAPPING = IndexerService::class.java
                 .getResource("/internalad-mapping.json").readText()
     }
 
-    init {
-        try {
-            initIndex()
-        }
-        catch (e:Exception) {
-            LOG.error("Got exception while initializing: ${e.message}, will wait for 20s and try again")
-            Thread.sleep(20000)
-            initIndex()
-        }
-    }
-
-    private fun initIndex() {
+    fun initIndex(indexName: String) {
         val indexRequest = GetIndexRequest(indexName)
         if (!client.indices().exists(indexRequest, RequestOptions.DEFAULT)) {
+            LOG.info("Index does not exist, creating index: $indexName")
             createIndex(indexName);
         }
-        val aliasIndexRequest = GetIndexRequest(INTERNALAD)
-        if (!client.indices().exists(aliasIndexRequest, RequestOptions.DEFAULT)) {
-            updateAlias(indexName)
-        }
-        LOG.info("Will index to indexName $indexName")
     }
 
-    override fun createIndex(indexName: String): Boolean {
+    fun createIndex(indexName: String): Boolean {
         val indexRequest = GetIndexRequest(indexName)
         if (!client.indices().exists(indexRequest, RequestOptions.DEFAULT)) {
             LOG.info("Creating index {} ", indexName)
@@ -105,15 +90,15 @@ class IndexerService(
     }
 
 
-    override fun index(ads: List<AdTransport>): IndexResponse {
-        val bulkResponse = bulkIndex(ads)
+    fun index(ads: List<AdTransport>, indexName: String): IndexResponse {
+        val bulkResponse = bulkIndex(ads, indexName)
         return IndexResponse(bulkResponse.hasFailures(),
                 bulkResponse.status(),
                 bulkResponse.items.size,
                 bulkResponse.buildFailureMessage())
     }
 
-    private fun bulkIndex(ads: List<AdTransport>): BulkResponse {
+    private fun bulkIndex(ads: List<AdTransport>, indexName: String): BulkResponse {
         val adStream = adPipelineFactory.toPipelineStream(ads)
         return  indexBulk(adStream, indexName)
     }
@@ -129,7 +114,7 @@ class IndexerService(
     }
 
 
-    override fun fetchLastUpdatedTimeForIndex(indexName: String): LocalDateTime {
+    fun fetchLastUpdatedTimeForIndex(indexName: String): LocalDateTime {
         val searchRequest = SearchRequest(indexName)
         val sourceBuilder = SearchSourceBuilder()
                 .size(1)
@@ -155,4 +140,17 @@ class IndexerService(
         LOG.info("Deleted ${response.deleted} ads")
     }
 
+    fun initAlias(indexName: String) {
+        val aliasIndexRequest = GetAliasesRequest(INTERNALAD)
+        val response = client.indices().getAlias(aliasIndexRequest, RequestOptions.DEFAULT)
+        if ((response.status() == RestStatus.OK && response.aliases[indexName] == null) || response.status() == RestStatus.NOT_FOUND)  {
+            LOG.warn("Alias ${INTERNALAD} is not pointing to $indexName, will try to update alias again")
+            updateAlias(indexName)
+        }
+    }
+
 }
+data class IndexResponse(val hasFailures: Boolean,
+                         val status: RestStatus,
+                         val numItems: Int,
+                         val failureMessage: String)

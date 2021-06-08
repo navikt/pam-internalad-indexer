@@ -18,16 +18,14 @@ class IndexerController(private val indexerService: IndexerService,
         private val LOG = LoggerFactory.getLogger(IndexerController::class.java)
     }
 
-    @Get("/lastupdated{?indexName}")
-    fun getLastUpdateTimeForIndex(indexName: String?): LocalDateTime {
-        return if (indexName!=null) indexerService.fetchLastUpdatedTimeForIndex(indexName)
-        else indexerService.fetchLastUpdatedTimeForIndex(indexerService.indexName)
+    @Get("/lastupdated")
+    fun getLastUpdateTimeForIndex(@QueryValue indexName: String): LocalDateTime {
+        return indexerService.fetchLastUpdatedTimeForIndex(indexName)
     }
 
-    @Put("/aliases{?indexName}")
-    fun updateAliases(indexName: String?): Boolean {
-        return if (indexName!=null) indexerService.updateAlias(indexName)
-        else  indexerService.updateAlias(indexerService.indexName)
+    @Put("/aliases")
+    fun updateAliases(@QueryValue indexName: String): Boolean {
+        return indexerService.updateAlias(indexName)
     }
 
     @Get("/aliases")

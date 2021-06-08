@@ -13,24 +13,32 @@ import org.apache.kafka.common.TopicPartition
 import org.elasticsearch.rest.RestStatus
 import org.slf4j.LoggerFactory
 
-@KafkaListener(clientId = AD_LISTENER_CLIENT_ID, groupId = "\${adlistener.group-id:internalad-indexer}", threads = 1, offsetReset = OffsetReset.EARLIEST,
-        batch = true, offsetStrategy = OffsetStrategy.SYNC)
-@Requires(property = "indexer.enabled", value = "true")
-class AdTopicListener(private val indexerService: IndexerService,
-                      @Value("\${indexer.indexname:internalad-1}") val indexName: String): ConsumerRebalanceListener, ConsumerAware<Any, Any> {
+@KafkaListener(
+    clientId = AD_LISTENER_CLIENT_ID,
+    groupId = "\${adlistener.reindex.group-id:internalad-reindexer}",
+    threads = 1,
+    offsetReset = OffsetReset.EARLIEST,
+    batch = true,
+    offsetStrategy = OffsetStrategy.SYNC
+)
+@Requires(property = "indexer.reindex", value = "true")
+class AdReIndexTopicListener(
+    private val indexerService: IndexerService,
+    @Value("\${indexer.reindex.indexname:reindex-internalad-1}") val indexName: String
+) : ConsumerRebalanceListener, ConsumerAware<Any, Any> {
 
-    private lateinit var consumer: Consumer<Any,Any>
+    private lateinit var consumer: Consumer<Any, Any>
+
     companion object {
-        private val LOG = LoggerFactory.getLogger(AdTopicListener::class.java)
+        private val LOG = LoggerFactory.getLogger(AdReIndexTopicListener::class.java)
 
     }
 
     init {
         try {
             initIndex()
-        }
-        catch (e:Exception) {
-            LOG.error("Got exception while initializing: ${e.message}, will wait for 20s and try again")
+        } catch (e: Exception) {
+            LOG.error("Elasticsearch might not be ready ${e.message}, will wait 20s and retry")
             Thread.sleep(20000)
             initIndex()
         }
@@ -38,8 +46,7 @@ class AdTopicListener(private val indexerService: IndexerService,
 
     private fun initIndex() {
         indexerService.initIndex(indexName)
-        indexerService.initAlias(indexName)
-        LOG.info("Will index to $indexName")
+        LOG.info("Will reindex to $indexName")
     }
 
     @Topic("\${adlistener.topic:StillingIntern}")
@@ -55,7 +62,7 @@ class AdTopicListener(private val indexerService: IndexerService,
                 throw Exception("Index response has failures, elasticsearch might be down")
             }
         }
-     }
+    }
 
     override fun onPartitionsAssigned(partitions: MutableCollection<TopicPartition>) {
         LOG.info("onPartitionsAssigned is not implemented")
@@ -69,5 +76,3 @@ class AdTopicListener(private val indexerService: IndexerService,
         this.consumer = consumer
     }
 }
-
-const val AD_LISTENER_CLIENT_ID="internalad-indexer-ad-topic-listener"
