@@ -408,6 +408,16 @@
         },
         "remote": {
           "type": "keyword"
+        },
+        "_score": {
+          "properties": {
+            "prop": {
+                "type": "keyword"
+            },
+            "value": {
+              "type": "integer"
+            }
+          }
         }
       }
     },
