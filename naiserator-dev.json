@@ -6,6 +6,6 @@
   "indexer_enabled": "true",
   "indexer_reindex": "true",
   "indexer_reindex_indexname": "internalad_20210622",
-  "adlistener_reindex_group_id": "internalad_202106022",
+  "adlistener_reindex_group_id": "internalad_20210622",
   "kafka_pool": "nav-dev"
 }
