@@ -411,7 +411,7 @@
         },
         "_score": {
           "properties": {
-            "prop": {
+            "name": {
                 "type": "keyword"
             },
             "value": {
