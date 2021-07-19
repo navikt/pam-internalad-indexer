@@ -141,7 +141,9 @@
     "searchtags_facet": {
       "type": "keyword"
     },
-
+    "score_missing_tags": {
+      "type": "keyword"
+    },
     "occupationList": {
       "type": "nested",
       "properties": {
@@ -413,12 +415,17 @@
           "type": "nested",
           "properties": {
             "name": {
-                "type": "keyword"
+              "type": "keyword",
+              "copy_to": "score_missing_tags"
             },
             "value": {
               "type": "integer"
             }
           }
+        },
+        "_scoretotal": {
+          "type": "integer",
+          "ignore_malformed": true
         }
       }
     },
