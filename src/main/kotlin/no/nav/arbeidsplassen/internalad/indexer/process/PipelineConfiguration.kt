@@ -18,13 +18,14 @@ class PipelineConfiguration(private val objectMapper: ObjectMapper,
     fun adPipeline(): PipelineFactory {
         val filterChain: Predicate<AdTransport> = allowAllFilter()
         val processorChain: Consumer<PipelineItem> = AddGeoPointToLocation()
-                .andThen(AddOccupationList(styrkCodeConverter))
-                .andThen(JsonStringExploder(objectMapper, JsonPointer.valueOf("/properties/searchtags"), true))
-                .andThen(JsonStringExploder(objectMapper, JsonPointer.valueOf( "/properties/softrequirements"), true))
-                .andThen(JsonStringExploder(objectMapper, JsonPointer.valueOf("/properties/hardrequirements"), true))
-                .andThen(JsonStringExploder(objectMapper, JsonPointer.valueOf("/properties/personalattributes"), true))
-                .andThen(JsonStringExploder(objectMapper, JsonPointer.valueOf("/employer/properties/nace2"), true))
-                .andThen(FilterBadSearchtags())
+            .andThen(AddOccupationList(styrkCodeConverter))
+            .andThen(JsonStringExploder(objectMapper, JsonPointer.valueOf("/properties/searchtags"), true))
+            .andThen(JsonStringExploder(objectMapper, JsonPointer.valueOf( "/properties/softrequirements"), true))
+            .andThen(JsonStringExploder(objectMapper, JsonPointer.valueOf("/properties/hardrequirements"), true))
+            .andThen(JsonStringExploder(objectMapper, JsonPointer.valueOf("/properties/personalattributes"), true))
+            .andThen(JsonStringExploder(objectMapper, JsonPointer.valueOf("/employer/properties/nace2"), true))
+            .andThen(JsonStringExploder(objectMapper, JsonPointer.valueOf("/properties/_score"), true))
+            .andThen(FilterBadSearchtags())
         return PipelineFactory(filterChain, processorChain, objectMapper)
     }
 
