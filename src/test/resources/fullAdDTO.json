@@ -60,7 +60,9 @@
     "ontologyJobtitle": "{\"konseptId\":266998,\"label\":\"Pedagogisk leder (barnehage/førskole)\",\"styrk08\":\"2342\"}",
     "classification_input_source": "ontologyJobtitle",
     "sector": "Offentlig",
-    "remote": "Hjemmekontor"
+    "remote": "Hjemmekontor",
+    "_score":"[{\"name\":\"category\",\"value\":-50},{\"name\":\"jobarrangement\",\"value\":-10},{\"name\":\"jobpercentage\",\"value\":-10},{\"name\":\"keywords\",\"value\":-10},{\"name\":\"applicationurl\",\"value\":-10}]",
+    "_scoretotal":"-90"
   },
   "title": "Vi søker pedagogisk leder til",
   "status": "ACTIVE",
