@@ -52,6 +52,7 @@ class AdTopicListener(private val indexerService: IndexerService,
                 LOG.info("indexed ${indexResponse.numItems}")
                 LOG.info("committing latest offset ${offsets.last()} partition ${partitions.last()} with ad ${last.uuid} and last updated was ${last.updated}")
             } else {
+                LOG.error("Got error response from elasticsearch {}", indexResponse.failureMessage)
                 throw Exception("Index response has failures, elasticsearch might be down")
             }
         }
