@@ -27,7 +27,7 @@ import org.elasticsearch.search.sort.SortOrder
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.util.stream.Stream
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 
 @Singleton

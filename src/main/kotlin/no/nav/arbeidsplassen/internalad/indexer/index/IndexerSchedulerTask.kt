@@ -4,7 +4,7 @@ import io.micronaut.aop.Around
 import io.micronaut.context.annotation.Requires
 import io.micronaut.scheduling.annotation.Scheduled
 import net.javacrumbs.shedlock.micronaut.SchedulerLock
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 @Around
 @Singleton
