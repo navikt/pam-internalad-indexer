@@ -12,7 +12,7 @@ import org.apache.http.impl.client.BasicCredentialsProvider
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 @Factory
 class ElasticsearchFactory(@Value("\${elasticsearch.url:`http://localhost:9200`}") val esUrl: String,

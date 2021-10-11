@@ -8,7 +8,7 @@ import no.nav.pam.yrkeskategorimapper.StyrkCodeConverter
 
 import java.util.function.Consumer
 import java.util.function.Predicate
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 @Factory
 class PipelineConfiguration(private val objectMapper: ObjectMapper,

@@ -6,7 +6,7 @@ import no.nav.pam.yrkeskategorimapper.StyrkCodeConverter
 import org.elasticsearch.client.RestHighLevelClient
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 @Factory
 class IndexerFactory(val highLevelClient: RestHighLevelClient, val objectMapper: ObjectMapper) {
