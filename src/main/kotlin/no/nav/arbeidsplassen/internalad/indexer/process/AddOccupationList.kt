@@ -12,7 +12,7 @@ class AddOccupationList(val converter: StyrkCodeConverter): Consumer<PipelineIte
     override fun accept(item: PipelineItem) {
         val occupationList = item.document.putArray(occupation_list)
         item.dto.categoryList.stream()
-                .filter { "STYRK08NAV" == it.categoryType }
+                .filter { "STYRK08NAV" == it.categoryType || "STYRK08" == it.categoryType}
                 .map { converter.lookup(it.code) }
                 .filter { it.isPresent }
                 .map { it.get() }.filter { "0" != it.styrkCode }
