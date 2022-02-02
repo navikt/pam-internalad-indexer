@@ -14,10 +14,10 @@ import org.elasticsearch.rest.RestStatus
 import org.slf4j.LoggerFactory
 
 @KafkaListener(clientId = AD_LISTENER_CLIENT_ID, groupId = "\${adlistener.group-id:internalad-indexer}", threads = 1, offsetReset = OffsetReset.EARLIEST,
-        batch = true, offsetStrategy = OffsetStrategy.SYNC)
+        batch = true, offsetStrategy = OffsetStrategy.DISABLED)
 @Requires(property = "indexer.enabled", value = "true")
 class AdTopicListener(private val indexerService: IndexerService,
-                      @Value("\${indexer.indexname:internalad-1}") val indexName: String): ConsumerRebalanceListener, ConsumerAware<Any, Any> {
+                      @Value("\${indexer.indexname:internalad-1}") val indexName: String, private val kafkaStateRegistry: KafkaStateRegistry): ConsumerRebalanceListener, ConsumerAware<Any, Any> {
 
     private lateinit var consumer: Consumer<Any,Any>
     companion object {
@@ -43,19 +43,25 @@ class AdTopicListener(private val indexerService: IndexerService,
     }
 
     @Topic("\${adlistener.topic:StillingIntern}")
-    fun receive(ads: List<AdTransport>, offsets: List<Long>, partitions: List<Int>) {
+    fun receive(ads: List<AdTransport>, offsets: List<Long>, partitions: List<Int>, topics: List<String>, kafkaconsumer: Consumer<*, *>) {
         LOG.info("Received batch with {} ads", ads.size)
+        if (kafkaStateRegistry.hasError()) {
+            LOG.error("Kafka state is set to error, skipping this batch to avoid message loss. Consumer should be set to pause")
+            return
+        }
         if (ads.isNotEmpty()) {
             val indexResponse = indexerService.index(ads, indexName)
             val last = ads.last()
             if (indexResponse.status == RestStatus.OK && !indexResponse.hasFailures) {
                 LOG.info("indexed ${indexResponse.numItems}")
                 LOG.info("committing latest offset ${offsets.last()} partition ${partitions.last()} with ad ${last.uuid} and last updated was ${last.updated}")
+                kafkaconsumer.commitSync()
             } else {
                 LOG.error("Got error response from elasticsearch {}", indexResponse.failureMessage)
                 throw Exception("Index response has failures, elasticsearch might be down")
             }
         }
+
      }
 
     override fun onPartitionsAssigned(partitions: MutableCollection<TopicPartition>) {
