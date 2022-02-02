@@ -52,7 +52,7 @@ class StatusController(private val kafkaStateRegistry: KafkaStateRegistry, priva
     fun resumeKafka(): String {
         consumerRegistry.consumerIds
             .forEach {
-                LOG.error("Pausing consumer $it")
+                LOG.error("Resuming consumer $it")
                 consumerRegistry.resume(it)
             }
         return "All consumers set to resume!"
