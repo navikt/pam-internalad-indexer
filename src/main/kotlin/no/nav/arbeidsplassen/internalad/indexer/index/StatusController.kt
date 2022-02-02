@@ -4,6 +4,7 @@ import io.micronaut.configuration.kafka.ConsumerRegistry
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Put
 import org.slf4j.LoggerFactory
 
 @Controller("/internal")
@@ -37,4 +38,23 @@ class StatusController(private val kafkaStateRegistry: KafkaStateRegistry, priva
         return kafkaStateRegistry.hasError()
     }
 
+    @Put("/kafka/pause")
+    fun pauseKafka(): String {
+        consumerRegistry.consumerIds
+            .forEach {
+                LOG.error("Pausing consumer $it")
+                consumerRegistry.pause(it)
+            }
+        return "All consumers set to pause!"
+    }
+
+    @Put("/kafka/resume")
+    fun resumeKafka(): String {
+        consumerRegistry.consumerIds
+            .forEach {
+                LOG.error("Pausing consumer $it")
+                consumerRegistry.resume(it)
+            }
+        return "All consumers set to resume!"
+    }
 }
