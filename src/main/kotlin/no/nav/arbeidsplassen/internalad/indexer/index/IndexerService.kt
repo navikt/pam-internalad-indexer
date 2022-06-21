@@ -1,7 +1,6 @@
 package no.nav.arbeidsplassen.internalad.indexer.index
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.micronaut.context.annotation.Value
 import no.nav.arbeidsplassen.internalad.indexer.process.PipelineFactory
 import no.nav.arbeidsplassen.internalad.indexer.process.PipelineItem
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest
@@ -31,14 +30,13 @@ import jakarta.inject.Singleton
 
 
 @Singleton
-class IndexerService(
-                     val client: RestHighLevelClient,
+class IndexerService(val client: RestHighLevelClient,
                      val objectMapper: ObjectMapper,
                      val adPipelineFactory: PipelineFactory) {
 
     companion object {
         private val LOG = LoggerFactory.getLogger(IndexerService::class.java)
-        private val months = 36L
+        private val months = 30L
         private val INTERNALAD_COMMON_SETTINGS = IndexerService::class.java
                 .getResource("/internalad-common.json").readText()
         private val INTERNALAD_MAPPING = IndexerService::class.java

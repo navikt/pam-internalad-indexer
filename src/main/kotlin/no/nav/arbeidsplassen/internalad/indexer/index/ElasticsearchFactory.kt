@@ -15,9 +15,9 @@ import org.elasticsearch.client.RestHighLevelClient
 import jakarta.inject.Singleton
 
 @Factory
-class ElasticsearchFactory(@Value("\${elasticsearch.url:`http://localhost:9200`}") val esUrl: String,
-                           @Value("\${elasticsearch.user:foo}") val user: String,
-                           @Value("\${elasticsearch.password:bar}") val password: String) {
+class ElasticsearchFactory(@Value("\${OPEN_SEARCH_URI:`https://localhost:9200`}") val esUrl: String,
+                           @Value("\${OPEN_SEARCH_USERNAME:admin}") val user: String,
+                           @Value("\${OPEN_SEARCH_PASSWORD:admin}") val password: String) {
 
 
     @Singleton
