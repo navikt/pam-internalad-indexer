@@ -1,6 +1,6 @@
 micronaut:
   application:
-    name: internalad-indexer
+    name: internalad-indexer-os
   server:
     thread-selection: auto
   http:
@@ -25,10 +25,6 @@ jackson:
   bean-introspection-module: true
   serialization:
     indentOutput: true
-feed:
-  ad:
-    url: http://localhost:9001/api/v1/ads
-    pagesize: 100
 shedlock:
   defaults:
     lock-at-most-for: 5m

@@ -3,7 +3,6 @@ package no.nav.arbeidsplassen.internalad.indexer.index
 import com.fasterxml.jackson.databind.JsonNode
 import io.micronaut.configuration.kafka.ConsumerRegistry
 import io.micronaut.http.annotation.*
-import net.javacrumbs.shedlock.core.LockConfiguration
 import org.elasticsearch.cluster.metadata.AliasMetadata
 import org.slf4j.LoggerFactory
 import java.time.Instant
@@ -11,7 +10,6 @@ import java.time.LocalDateTime
 
 @Controller("/internal")
 class IndexerController(private val indexerService: IndexerService,
-                        private val lockProvider: ElasticsearchLockProvider,
                         private val consumerRegistry: ConsumerRegistry) {
 
     companion object {
@@ -33,17 +31,7 @@ class IndexerController(private val indexerService: IndexerService,
         return indexerService.getAlias()
     }
 
-    @Get("/schedulerlocks")
-    fun getAllSchedulerLocks(): List<JsonNode>{
-        return lockProvider.getAllLocks()
-    }
 
-    @Put("/schedulerlocks")
-    fun stopScheduler(@QueryValue name: String, @QueryValue minutes: Long):  Boolean {
-        LOG.info("Locking sheduler ${name} for ${minutes} minutes")
-        val lock = lockProvider.lock(LockConfiguration(name, Instant.now().plusSeconds(minutes * 60)))
-        return lock.isPresent
-    }
 
     @Get("/consumers")
     fun getConsumerIds(): MutableSet<String> {

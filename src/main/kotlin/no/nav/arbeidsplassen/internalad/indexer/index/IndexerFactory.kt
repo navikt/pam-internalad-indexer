@@ -12,11 +12,6 @@ import jakarta.inject.Singleton
 class IndexerFactory(val highLevelClient: RestHighLevelClient, val objectMapper: ObjectMapper) {
 
     @Singleton
-    fun lockProvider(): ElasticsearchLockProvider {
-        return ElasticsearchLockProvider(highLevelClient=highLevelClient, objectMapper = objectMapper);
-    }
-
-    @Singleton
     fun styrkCodeConverter(): StyrkCodeConverter {
         return StyrkCodeConverter()
     }

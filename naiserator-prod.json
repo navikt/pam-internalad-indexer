@@ -1,11 +1,10 @@
 {
-  "elasticsearch_url": "http://stillinger-opendistro-elasticsearch:9200",
   "adlistener_topic": "teampam.stilling-intern-1",
-  "adlistener_group_id": "internalad_20210721",
+  "adlistener_group_id": "internalad_20220621",
   "indexer_enabled": "true",
-  "indexer_indexname": "internalad_20210721",
-  "adlistener_reindex_group_id": "internalad_20210721",
+  "indexer_indexname": "internalad_20220621",
+  "adlistener_reindex_group_id": "internalad_20220621",
   "indexer_reindex": "false",
-  "indexer_reindex_indexname": "internalad_20210721",
+  "indexer_reindex_indexname": "internalad_20220621",
   "kafka_pool": "nav-prod"
 }
