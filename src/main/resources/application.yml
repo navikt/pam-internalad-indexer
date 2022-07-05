@@ -25,9 +25,6 @@ jackson:
   bean-introspection-module: true
   serialization:
     indentOutput: true
-shedlock:
-  defaults:
-    lock-at-most-for: 5m
 adlistener:
   topic: StillingIntern
 indexer:

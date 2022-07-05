@@ -13,6 +13,7 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import jakarta.inject.Singleton
+import org.slf4j.LoggerFactory
 
 @Factory
 class ElasticsearchFactory(@Value("\${OPEN_SEARCH_URI:`https://localhost:9200`}") val esUrl: String,
@@ -20,8 +21,13 @@ class ElasticsearchFactory(@Value("\${OPEN_SEARCH_URI:`https://localhost:9200`}"
                            @Value("\${OPEN_SEARCH_PASSWORD:admin}") val password: String) {
 
 
+    companion object {
+        private val LOG = LoggerFactory.getLogger(ElasticsearchFactory::class.java)
+    }
+
     @Singleton
     fun restHigLevelClient(): RestHighLevelClient {
+        LOG.info("Using elasticsearch url $esUrl with user $user")
         val credentialsProvider: CredentialsProvider = BasicCredentialsProvider()
         credentialsProvider.setCredentials(AuthScope.ANY,
                 UsernamePasswordCredentials(user, password))
