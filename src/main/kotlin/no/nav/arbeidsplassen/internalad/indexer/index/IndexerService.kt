@@ -15,7 +15,6 @@ import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.client.indices.GetIndexRequest
 import org.elasticsearch.client.indices.PutMappingRequest
 import org.elasticsearch.cluster.metadata.AliasMetadata
-import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.index.query.MatchAllQueryBuilder
 import org.elasticsearch.index.query.RangeQueryBuilder
 import org.elasticsearch.index.reindex.DeleteByQueryRequest
@@ -27,6 +26,7 @@ import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.util.stream.Stream
 import jakarta.inject.Singleton
+import org.elasticsearch.xcontent.XContentType
 
 
 @Singleton
