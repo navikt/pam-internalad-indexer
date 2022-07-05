@@ -34,6 +34,7 @@ class ElasticsearchFactory(@Value("\${OPEN_SEARCH_URI:`https://localhost:9200`}"
 
         return RestHighLevelClient(RestClient
                     .builder(HttpHost.create(esUrl))
+
                     .setRequestConfigCallback {
                         requestConfigBuilder: RequestConfig.Builder -> requestConfigBuilder
                             .setConnectionRequestTimeout(5000)

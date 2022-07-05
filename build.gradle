@@ -45,7 +45,11 @@ dependencies {
     testImplementation "io.micronaut.test:micronaut-test-junit5"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:$jupiterVersion"
     testImplementation "org.testcontainers:kafka:$tcVersion"
-    implementation "org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticsearchVersion"
+    implementation ("org.elasticsearch.client:elasticsearch-rest-high-level-client") {
+            version {
+                strictly "$elasticsearchVersion"
+            }
+    }
     implementation "io.micronaut.micrometer:micronaut-micrometer-core:$micronautMicrometerVersion"
     implementation "io.micronaut.micrometer:micronaut-micrometer-registry-prometheus:$micronautMicrometerVersion"
     implementation "io.micronaut:micronaut-management:$micronautVersion"

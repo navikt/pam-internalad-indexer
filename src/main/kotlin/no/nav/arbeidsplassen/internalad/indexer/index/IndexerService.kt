@@ -26,8 +26,7 @@ import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.util.stream.Stream
 import jakarta.inject.Singleton
-import org.elasticsearch.xcontent.XContentType
-
+import org.elasticsearch.common.xcontent.XContentType
 
 @Singleton
 class IndexerService(val client: RestHighLevelClient,
