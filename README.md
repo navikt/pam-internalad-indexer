@@ -4,7 +4,7 @@
 
 ### Prerequisite
 * Elasticsearch
-* Kafka with StillingIntern topic
+* Kafka with teampam.stilling-intern-1 topic
 
 ### How to run in dev
 ```

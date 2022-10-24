@@ -32,7 +32,7 @@ class InternalAdTopicIndexerIT  {
         StringSerializer(), StringSerializer())
     private val objectMapper: ObjectMapper = ObjectMapper()
         .registerModule(JavaTimeModule())
-        .registerModule(KotlinModule())
+        .registerModule(KotlinModule.Builder().build())
         .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
         .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         .setSerializationInclusion(JsonInclude.Include.NON_NULL)
@@ -53,7 +53,7 @@ class InternalAdTopicIndexerIT  {
             InternalAdTopicIndexerIT::class.java.getResourceAsStream("/fullAdDTO.json"),
             AdTransport::class.java
         )
-        kafkaProducer.send(ProducerRecord("StillingIntern", "10584075-1e5c-4a83-bf49-c80bcab83018", objectMapper.writeValueAsString(adTransport)))
+        kafkaProducer.send(ProducerRecord("teampam.stilling-intern-1", "10584075-1e5c-4a83-bf49-c80bcab83018", objectMapper.writeValueAsString(adTransport)))
         kafkaProducer.flush()
         LOG.info("Ad sent")
         Thread.sleep(3000)

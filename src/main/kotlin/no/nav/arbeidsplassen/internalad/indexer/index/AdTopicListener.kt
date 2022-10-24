@@ -42,7 +42,7 @@ class AdTopicListener(private val indexerService: IndexerService,
         LOG.info("Will index to $indexName")
     }
 
-    @Topic("\${adlistener.topic:StillingIntern}")
+    @Topic("\${adlistener.topic:teampam.stilling-intern-1}")
     fun receive(ads: List<AdTransport>, offsets: List<Long>, partitions: List<Int>, topics: List<String>, kafkaconsumer: Consumer<*, *>) {
         LOG.info("Received batch with {} ads", ads.size)
         if (kafkaStateRegistry.hasError()) {

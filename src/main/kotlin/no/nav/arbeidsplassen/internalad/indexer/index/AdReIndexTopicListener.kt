@@ -49,7 +49,7 @@ class AdReIndexTopicListener(
         LOG.info("Will reindex to $indexName")
     }
 
-    @Topic("\${adlistener.topic:StillingIntern}")
+    @Topic("\${adlistener.topic:teampam.stilling-intern-1}")
     fun receive(ads: List<AdTransport>, offsets: List<Long>, partitions: List<Int>) {
         LOG.info("Received batch with {} ads", ads.size)
         if (ads.isNotEmpty()) {

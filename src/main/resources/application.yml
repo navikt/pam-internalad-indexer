@@ -26,7 +26,7 @@ jackson:
   serialization:
     indentOutput: true
 adlistener:
-  topic: StillingIntern
+  topic: teampam.stilling-intern-1
 indexer:
   scheduler:
     delete:

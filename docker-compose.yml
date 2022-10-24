@@ -1,25 +1,25 @@
 ---
 version: '3'
 services:
-  zookeeper:
+  zookeeper-internalad-indexer:
     image: confluentinc/cp-zookeeper:5.5.0
     logging:
       driver: none
     hostname: zookeeper
-    container_name: zookeeper
+    container_name: zookeeper-internalad-indexer
     ports:
       - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-  broker:
+  broker-internalad-indexer:
     image: confluentinc/cp-kafka:5.5.0
     logging:
       driver: none
     hostname: broker
-    container_name: broker
+    container_name: broker-internalad-indexer
     depends_on:
-      - zookeeper
+      - zookeeper-internalad-indexer
     ports:
       - "29092:29092"
       - "9092:9092"
@@ -41,8 +41,8 @@ services:
       - opendistro_security.disabled=true
   internalad-indexer:
     depends_on:
-      - broker
-      - zookeeper
+      - broker-internalad-indexer
+      - zookeeper-internalad-indexer
       - elasticsearch
     build: .
     ports:
