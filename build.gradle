@@ -6,8 +6,6 @@ plugins {
     id "application"
 }
 
-
-
 version "0.1"
 
 group "no.nav.arbeidsplassen.internalad.indexer"
@@ -16,7 +14,7 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven { url "https://jcenter.bintray.com" }
-    maven { url "https://github-package-registry-mirror.gc.nav.no/cached/maven-release"}
+    maven { url "https://github-package-registry-mirror.gc.nav.no/cached/maven-release" }
 }
 
 configurations {
@@ -45,10 +43,10 @@ dependencies {
     testImplementation "io.micronaut.test:micronaut-test-junit5"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:$jupiterVersion"
     testImplementation "org.testcontainers:kafka:$tcVersion"
-    implementation ("org.elasticsearch.client:elasticsearch-rest-high-level-client") {
-            version {
-                strictly "$elasticsearchVersion"
-            }
+    implementation("org.elasticsearch.client:elasticsearch-rest-high-level-client") {
+        version {
+            strictly "$elasticsearchVersion"
+        }
     }
     implementation "io.micronaut.micrometer:micronaut-micrometer-core:$micronautMicrometerVersion"
     implementation "io.micronaut.micrometer:micronaut-micrometer-registry-prometheus:$micronautMicrometerVersion"
@@ -71,28 +69,23 @@ test {
     useJUnitPlatform()
 }
 
-task integration(type: Test) {
+tasks.register('integration', Test) {
     include "**/*IT.class"
     useJUnitPlatform()
 }
 
 allOpen {
-	annotation("io.micronaut.aop.Around")
+    annotation("io.micronaut.aop.Around")
 }
 
 compileKotlin {
-	kotlinOptions {
-	    jvmTarget = '14'
-	    //Will retain parameter names for Java reflection
-	    javaParameters = true
-	}
+    kotlinOptions.jvmTarget = '19'
+    kotlinOptions.javaParameters = true        //Will retain parameter names for Java reflection
 }
 
 compileTestKotlin {
-	kotlinOptions {
-	    jvmTarget = '14'
-	    javaParameters = true
-	}
+    kotlinOptions.jvmTarget = '19'
+    kotlinOptions.javaParameters = true
 }
 
 shadowJar {
