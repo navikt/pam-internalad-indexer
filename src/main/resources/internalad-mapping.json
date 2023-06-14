@@ -56,11 +56,12 @@
     },
     "businessName": {
       "type": "text",
-      "copy_to": "employername"
+      "copy_to": ["employername", "businessName_ngram"]
     },
     "title_no": {
       "type": "text",
-      "analyzer": "norwegian"
+      "analyzer": "norwegian",
+      "copy_to": "title_ngram"
     },
     "adtext_no": {
       "type": "text",
@@ -78,7 +79,18 @@
       "type": "text",
       "analyzer": "norwegian"
     },
-
+    "title_ngram": {
+      "type": "text",
+      "analyzer": "norwegian_ngram_analyzer"
+    },
+    "jobtitle_ngram": {
+      "type": "text",
+      "analyzer": "norwegian_ngram_analyzer"
+    },
+    "businessName_ngram": {
+      "type": "text",
+      "analyzer": "norwegian_ngram_analyzer"
+    },
     "engagementtype_facet": {
       "type": "keyword"
     },
@@ -363,7 +375,7 @@
         },
         "jobtitle": {
           "type": "text",
-          "copy_to": "searchtags_no"
+          "copy_to": ["searchtags_no", "jobtitle_ngram"]
         },
         "location": {
           "type": "text",
@@ -427,6 +439,9 @@
           "type": "integer",
           "ignore_malformed": true
         }
+      },
+      "hasInterestform": {
+        "type": "boolean"
       }
     },
     "administration": {
