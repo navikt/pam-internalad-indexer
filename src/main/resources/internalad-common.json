@@ -49,6 +49,21 @@
           "char_filter": [
             "html_strip"
           ]
+        },
+        "norwegian_ngram_analyzer": {
+          "tokenizer": "ngram_tokenizer",
+          "filter": [
+            "lowercase",
+            "norwegian_stop",
+            "norwegian_stemmer"
+          ]
+        }
+      },
+      "tokenizer": {
+        "ngram_tokenizer": {
+          "type": "ngram",
+          "min_gram": 2,
+          "max_gram": 4
         }
       }
     }
