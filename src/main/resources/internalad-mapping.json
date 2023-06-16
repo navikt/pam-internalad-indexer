@@ -438,10 +438,10 @@
         "_scoretotal": {
           "type": "integer",
           "ignore_malformed": true
+        },
+        "hasInterestform": {
+          "type": "boolean"
         }
-      },
-      "hasInterestform": {
-        "type": "boolean"
       }
     },
     "administration": {
