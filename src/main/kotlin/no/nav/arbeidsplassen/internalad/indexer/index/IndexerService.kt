@@ -54,12 +54,14 @@ class IndexerService(val client: RestHighLevelClient,
         val indexRequest = GetIndexRequest(indexName)
         if (!client.indices().exists(indexRequest, RequestOptions.DEFAULT)) {
             LOG.info("Creating index {} ", indexName)
-            val request = CreateIndexRequest(indexName)
-                    .source(INTERNALAD_COMMON_SETTINGS, XContentType.JSON)
-            client.indices().create(request, RequestOptions.DEFAULT)
-            val putMappingRequest = PutMappingRequest(indexName)
-                    .source(INTERNALAD_MAPPING, XContentType.JSON)
-            client.indices().putMapping(putMappingRequest, RequestOptions.DEFAULT)
+            val request = CreateIndexRequest(indexName).source(INTERNALAD_COMMON_SETTINGS, XContentType.JSON)
+            val response = client.indices().create(request, RequestOptions.DEFAULT)
+            LOG.info("CreateIndex request isAcknowledged: ${response.isAcknowledged} - SettingsJSON: $INTERNALAD_COMMON_SETTINGS")
+
+            val putMappingRequest = PutMappingRequest(indexName).source(INTERNALAD_MAPPING, XContentType.JSON)
+            val putMappingResponse = client.indices().putMapping(putMappingRequest, RequestOptions.DEFAULT)
+            LOG.info("PutMapping request isAcknowledged: ${putMappingResponse.isAcknowledged} - MappingJSON: $INTERNALAD_MAPPING")
+
             return true
         }
         return false
