@@ -52,7 +52,7 @@
     },
     "title": {
       "type": "text",
-      "copy_to": "title_no"
+      "copy_to": ["title_no", "title_ngram"]
     },
     "businessName": {
       "type": "text",
@@ -60,8 +60,7 @@
     },
     "title_no": {
       "type": "text",
-      "analyzer": "norwegian",
-      "copy_to": "title_ngram"
+      "analyzer": "norwegian"
     },
     "adtext_no": {
       "type": "text",
