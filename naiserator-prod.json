@@ -3,8 +3,8 @@
   "adlistener_group_id": "internalad_20230619",
   "indexer_enabled": "true",
   "indexer_indexname": "internalad_20230619",
-  "adlistener_reindex_group_id": "internalad_20230619",
-  "indexer_reindex": "false",
-  "indexer_reindex_indexname": "internalad_20230619",
+  "adlistener_reindex_group_id": "internalad_20230629",
+  "indexer_reindex": "true",
+  "indexer_reindex_indexname": "internalad_20230629",
   "kafka_pool": "nav-prod"
 }
