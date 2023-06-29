@@ -306,7 +306,7 @@
         },
         "name": {
           "type": "text",
-          "copy_to": "employername"
+          "copy_to": ["employername", "businessName_ngram"]
         },
         "orgnr": {
           "type": "keyword"
