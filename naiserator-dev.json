@@ -1,9 +1,9 @@
 {
-  "adlistener_group_id": "internalad_20230619",
+  "adlistener_group_id": "internalad_20230629",
   "adlistener_topic": "teampam.stilling-intern-1",
-  "indexer_indexname": "internalad_20230619",
+  "indexer_indexname": "internalad_20230629",
   "indexer_enabled": "true",
-  "indexer_reindex": "true",
+  "indexer_reindex": "false",
   "indexer_reindex_indexname": "internalad_20230629",
   "adlistener_reindex_group_id": "internalad_20230629",
   "kafka_pool": "nav-dev"
