@@ -38,7 +38,7 @@ class AdTopicListener(private val indexerService: IndexerService,
 
     private fun initIndex() {
         indexerService.initIndex(indexName)
-        indexerService.initAlias(indexName)
+        //indexerService.initAlias(indexName)
         LOG.info("Will index to $indexName")
     }
 
